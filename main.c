@@ -1,10 +1,9 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <avr/io.h>
-#define F_CPU 16000000UL
-#include <util/delay.h>
-#include <avr/interrupt.h>
+/********************************************************************************
+* main.c: 
+********************************************************************************/
+
+/* Include directives */
+#include "main.h"
 
 // #define PORTB *((volatile uint8_t*) 0x25)
 // #define DDRB  *((volatile uint8_t*) 0x24)
