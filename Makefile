@@ -46,10 +46,8 @@ flash: $(BUILDDIR)/$(TARGET).hex
 
 # Clean up build files
 clean:
-	rm -rf $(BUILDDIR)
-
-# Create build directory if it doesn't exist
-$(shell mkdir $(BUILDDIR) 2>/dev/null)
+	@echo "Removing contents of build folder"
+	@rm -rf $(BUILDDIR)/*
 
 # Phony targets for non-file targets
 .PHONY: all flash clean

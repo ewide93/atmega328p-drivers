@@ -1,12 +1,22 @@
-/********************************************************************************
-* main.c: 
-********************************************************************************/
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// File: main.c
+//
+// Purpose: Main entry-point of application. Executes hardware setup routines before entering
+//          infinite loop.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/* Include directives */
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+// Include directives
+// 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "main.h"
 #include "delay.h"
+#include "typedef.h"
 
-volatile bool BlinkEnabled = false;
+volatile BOOL BlinkEnabled = FALSE;
 
 ISR (INT0_vect)
 {
@@ -15,6 +25,7 @@ ISR (INT0_vect)
 
     return;
 }
+
 
 int main(void)
 {
@@ -26,14 +37,14 @@ int main(void)
     asm("SEI");
 
     
-    while (true)
+    while (1)
     {
         if (BlinkEnabled)
         {
             PORTD |= (1 << PORTD3);
-            BlockingDelay_ms(ON_TIME_MS);
+            BlockingDelay_ms(500);
             PORTD &= ~(1 << PORTD3);
-            BlockingDelay_ms(OFF_TIME_MS);
+            BlockingDelay_ms(250);
         }
     }
 
