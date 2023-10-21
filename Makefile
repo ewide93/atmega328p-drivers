@@ -1,15 +1,56 @@
-SHELL = /bin/sh
+# AVR-GCC, AVRDUDE, and project configuration
+MCU = atmega328p
+F_CPU = 16000000UL
+TARGET = atmega328p-driver
+SOURCE = main.c
 CC = avr-gcc
-SRC = -I./src/*.c
-INC = -I./inc
-AVRLIB = C:/avr8-gnu-toolchain-3.7.0.1796-win32.any.x86_64/avr8-gnu-toolchain-win32_x86_64/avr/include/avr
+OBJCOPY = avr-objcopy
+AVRDUDE = avrdude
 
-all :
-	$(CC) -mmcu=atmega328p -B $(AVRLIB) $(INC) -O2 \
-	-o ./bin/a.out ./src/main.c
-	avr-objcopy -O ihex -j .text -j .data ./bin/a.out ./bin/a.hex
-flash :
-	avrdude -C C:/AVRDUDE/avrdude.conf -v -p atmega328p -c arduino -PCOM5 \
-	-b 115200 -D -U flash:w:a.hex:i
-clean :
-	rm ./bin/a.out ./bin/a.hex
+# Compiler and programmer settings
+PORT = COM6  # Change this to the correct COM port on your system
+PROGRAMMER = arduino
+BAUD_RATE = 115200
+
+# Compiler and linker flags
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Wall -Os
+LDFLAGS = -mmcu=$(MCU)
+
+# Source and build directories
+SRCDIR = src
+BUILDDIR = build
+
+# List of source files
+SRC = $(wildcard $(SRCDIR)/*.c)
+
+# Object files (convert source paths to build paths)
+OBJ = $(SRC:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
+
+# Default target: Build the HEX file
+all: $(BUILDDIR)/$(TARGET).hex
+
+# Compile source files
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Link object files to create ELF file
+$(BUILDDIR)/$(TARGET).elf: $(OBJ)
+	$(CC) $(LDFLAGS) $^ -o $@
+
+# Convert ELF file to HEX file
+$(BUILDDIR)/$(TARGET).hex: $(BUILDDIR)/$(TARGET).elf
+	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+
+# Flash the HEX file to the AVR
+flash: $(BUILDDIR)/$(TARGET).hex
+	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD_RATE) -U flash:w:$<
+
+# Clean up build files
+clean:
+	rm -rf $(BUILDDIR)
+
+# Create build directory if it doesn't exist
+$(shell mkdir $(BUILDDIR) 2>/dev/null)
+
+# Phony targets for non-file targets
+.PHONY: all flash clean

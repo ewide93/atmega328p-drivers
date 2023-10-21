@@ -4,32 +4,32 @@
 
 /* Include directives */
 #include "main.h"
-
-// #define PORTB *((volatile uint8_t*) 0x25)
-// #define DDRB  *((volatile uint8_t*) 0x24)
-// #define PINB  *((volatile uint8_t*) 0x23)
+#include "delay.h"
 
 ISR (INT0_vect)
 {
-    PORTB ^= (1 << 5);
+    PORTD ^= (1 << 3);
 
     return;
 }
 
-
 int main(void)
 {
-    DDRB |= (1 << 5);
+    DDRD |= (1 << PORTD3);
+    // unsigned int x = MY_DEFINE;
     // PORTD |= (1 << 2);
 
-    EICRA = (1 << ISC01) | (1 << ISC00);
-    EIMSK = (1 << INT0);
-    asm("SEI");
+    // EICRA = (1 << ISC01) | (1 << ISC00);
+    // EIMSK = (1 << INT0);
+    // asm("SEI");
 
     
     while (true)
     {
-
+        PORTD |= (1 << PORTD3);
+        BlockingDelay_ms(ON_TIME_MS);
+        PORTD &= ~(1 << PORTD3);
+        BlockingDelay_ms(OFF_TIME_MS);
     }
 
     return 0;

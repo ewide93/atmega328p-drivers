@@ -5,11 +5,18 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+#ifndef __AVR_ATmega328P__
+    #define __AVR_ATmega328P__
+#endif
+
+#ifndef F_CPU
+    #define F_CPU 16000000UL
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <avr/io.h>
-#define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-#endif /* _MAIN_H_ */
+#endif // _MAIN_H_
