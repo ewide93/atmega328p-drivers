@@ -2,18 +2,17 @@
 MCU = atmega328p
 F_CPU = 16000000UL
 TARGET = atmega328p-driver
-SOURCE = main.c
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
 
-# Compiler and programmer settings
+# Programmer settings
 PORT = COM6  # Change this to the correct COM port on your system
 PROGRAMMER = arduino
 BAUD_RATE = 115200
 
 # Compiler and linker flags
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Wall -Os
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Wall -Werror -Os
 LDFLAGS = -mmcu=$(MCU)
 
 # Source and build directories
