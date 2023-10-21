@@ -13,18 +13,18 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "delay.h"
 
-void BlockingDelay_ms(U16 Delay_ms)
+void BlockingDelay_ms(uint16_t Delay_ms)
 {
-    for (U16 i = 0; i < Delay_ms; i++)
+    for (uint16_t i = 0; i < Delay_ms; i++)
     {
         _delay_ms(1);
     }
     return;
 }
 
-void BlockingDelay_us(U16 Delay_us)
+void BlockingDelay_us(uint16_t Delay_us)
 {
-    for (U16 i = 0; i < Delay_us; i++)
+    for (uint16_t i = 0; i < Delay_us; i++)
     {
         _delay_us(1);
     }

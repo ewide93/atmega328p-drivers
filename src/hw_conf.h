@@ -17,6 +17,5 @@
 #endif
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
 
 #endif // _MAIN_H_

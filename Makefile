@@ -7,12 +7,12 @@ OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
 
 # Programmer settings
-PORT = COM6  # Change this to the correct COM port on your system
+PORT = COM5
 PROGRAMMER = arduino
 BAUD_RATE = 115200
 
 # Compiler and linker flags
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Wall -Werror -Os
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Wall -Werror -O2
 LDFLAGS = -mmcu=$(MCU)
 
 # Source and build directories

@@ -22,4 +22,6 @@ typedef signed long long            S64;
 
 typedef float                       F32;
 
+#define NULL                        0;
+
 #endif // _TYPEDEF_H_
