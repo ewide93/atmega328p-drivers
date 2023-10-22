@@ -73,6 +73,7 @@ void Digital_PinInit(Digital_PinType* PinPtr, enum IO_PORT Port, enum IO_MODE Mo
 void Digital_SetPin(Digital_PinType* PinPtr);
 void Digital_ClrPin(Digital_PinType* PinPtr);
 void Digital_TogglePin(Digital_PinType* PinPtr);
+bool Digital_ReadPin(Digital_PinType* PinPtr);
 
 
 #endif // _DIGITAL_H_

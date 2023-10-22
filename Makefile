@@ -2,6 +2,7 @@
 MCU = atmega328p
 F_CPU = 16000000UL
 TARGET = atmega328p-driver
+# Note: Add absolute path to the following programs to the PATH variable
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude

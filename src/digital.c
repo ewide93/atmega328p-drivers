@@ -17,7 +17,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
-// Object definitions.
+// Object definitions / instantiations.
 // 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Digital_PinType Pin3 = { 0 };
@@ -105,3 +105,9 @@ void Digital_TogglePin(Digital_PinType* PinPtr)
     *(PinPtr->PORT) ^= (1 << PinPtr->PinNum);
     return;
 }
+
+bool Digital_ReadPin(Digital_PinType* PinPtr)
+{
+    return (*(PinPtr->PIN) & (1 << PinPtr->PinNum));
+}
+
