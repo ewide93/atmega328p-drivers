@@ -13,7 +13,7 @@ PROGRAMMER = arduino
 BAUD_RATE = 115200
 
 # Compiler and linker flags
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Wall -Werror -O2
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Wall -Werror -O2 -std=c99
 LDFLAGS = -mmcu=$(MCU)
 
 # Source and build directories

@@ -1,35 +1,30 @@
 //==================================================================================================
 //
-// File: delay.c
+// File: hw_cfg.h
 //
-// Purpose: Definitions of blocking delay functions.
+// Purpose: Header-file containing hardware-specific definitions for ATmega328P.
 //
 //==================================================================================================
+#ifndef _HW_CFG_
+#define _HW_CFG_
+
+
+//==================================================================================================
+// Hardware specific definitions.
+//==================================================================================================
+#ifndef __AVR_ATmega328P__
+    #define __AVR_ATmega328P__
+#endif
+
+#ifndef F_CPU
+    #define F_CPU 16000000UL
+#endif
+
 
 //==================================================================================================
 // Include directives.
 //==================================================================================================
-#include "delay.h"
+#include <avr/io.h>
 
 
-//==================================================================================================
-// Function definitions.
-//==================================================================================================
-void BlockingDelay_ms(uint16_t Delay_ms)
-{
-    for (uint16_t i = 0; i < Delay_ms; i++)
-    {
-        _delay_ms(1);
-    }
-    return;
-}
-
-void BlockingDelay_us(uint16_t Delay_us)
-{
-    for (uint16_t i = 0; i < Delay_us; i++)
-    {
-        _delay_us(1);
-    }
-    return;
-}
-
+#endif // _HW_CFG_
