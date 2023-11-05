@@ -32,14 +32,14 @@ int main(void)
     while (1)
     {
         Digital_SetPin(Pin3);
-        BlockingDelay_ms(500);
+        BlockingDelay_ms(600);
         Digital_ClrPin(Pin3);
-        BlockingDelay_ms(250);
+        BlockingDelay_ms(150);
 
         Digital_SetPin(Pin4);
-        BlockingDelay_ms(500);
+        BlockingDelay_ms(600);
         Digital_ClrPin(Pin4);
-        BlockingDelay_ms(250);
+        BlockingDelay_ms(150);
     }
     return 0;
 }

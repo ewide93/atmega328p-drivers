@@ -54,3 +54,6 @@ dkms.conf
 
 # Visual Studio Code
 .vscode/
+
+# Virtual enivronments
+.venv/
