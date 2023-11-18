@@ -46,7 +46,7 @@ F_CPU := 16000000UL
 CFLAGS = -Wall -Werror -Wextra -Wunused-variable -std=c99 -I$(INC_DIR)
 CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 DFLAGS = -MMD -MP
-LDFLAGS += -mmcu=$(MCU)
+LDFLAGS += -mmcu=$(MCU) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 OPT := -O2
 
 #================================================================================
@@ -62,7 +62,7 @@ $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
 
 #================================================================================
-# Rule to link object files into .elf-file.
+# Rule to link object files into .elf-file and .map-file.
 #================================================================================
 $(BUILD_DIR)/$(TARGET).elf: $(OBJ_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@
@@ -89,6 +89,7 @@ clean:
 	@rm -rf $(BUILD_DIR)/*.d
 	@rm -rf $(BUILD_DIR)/*.elf
 	@rm -rf $(BUILD_DIR)/*.hex
+	@rm -rf $(BUILD_DIR)/*.map
 	@rm -rf $(TARGET)
 
 #================================================================================
