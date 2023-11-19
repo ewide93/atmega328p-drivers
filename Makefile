@@ -46,7 +46,7 @@ F_CPU := 16000000UL
 CFLAGS = -Wall -Werror -Wextra -Wunused-variable -std=c99 -I$(INC_DIR)
 CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 DFLAGS = -MMD -MP
-LDFLAGS += -mmcu=$(MCU) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
+LDFLAGS += -mmcu=$(MCU) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map -Wl,--cref
 OPT := -O2
 
 #================================================================================

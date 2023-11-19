@@ -22,9 +22,9 @@
 //==================================================================================================
 typedef enum IO_MODE
 {
-    INPUT,
-    INPUT_PULLUP,
-    OUTPUT
+    IO_MODE_INPUT,
+    IO_MODE_INPUT_PULLUP,
+    IO_MODE_OUTPUT
 } IO_MODE;
 
 typedef enum IO_PORT
@@ -48,6 +48,7 @@ typedef struct Digital_PinType
 //==================================================================================================
 extern Digital_PinType* Pin3;
 extern Digital_PinType* Pin4;
+extern Digital_PinType* Pin5;
 
 
 //==================================================================================================

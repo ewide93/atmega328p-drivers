@@ -25,8 +25,12 @@
 //==================================================================================================
 static Digital_PinType Local_Pin3 = { 0 };
 Digital_PinType* Pin3 = &Local_Pin3;
+
 static Digital_PinType Local_Pin4 = { 0 };
 Digital_PinType* Pin4 = &Local_Pin4;
+
+static Digital_PinType Local_Pin5 = { 0 };
+Digital_PinType* Pin5 = &Local_Pin5;
 
 
 //==================================================================================================
@@ -69,16 +73,16 @@ void Digital_PinInit(Digital_PinType* PinPtr, enum IO_PORT Port, enum IO_MODE Mo
 
     switch (Mode)
     {
-        case INPUT:
+        case IO_MODE_INPUT:
         {
             break;
         }
-        case INPUT_PULLUP:
+        case IO_MODE_INPUT_PULLUP:
         {
             *(PinPtr->PORT) |= (1 << PinPtr->PinNum);
             break;
         }
-        case OUTPUT:
+        case IO_MODE_OUTPUT:
         {
             *(PinPtr->DDR) |= (1 << PinPtr->PinNum);
             break;

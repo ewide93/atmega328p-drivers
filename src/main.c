@@ -31,15 +31,16 @@ int main(void)
 
     while (1)
     {
-        Digital_SetPin(Pin3);
-        BlockingDelay_ms(600);
-        Digital_ClrPin(Pin3);
-        BlockingDelay_ms(150);
-
-        Digital_SetPin(Pin4);
-        BlockingDelay_ms(600);
-        Digital_ClrPin(Pin4);
-        BlockingDelay_ms(150);
+        if (Digital_ReadPin(Pin5))
+        {
+            Digital_SetPin(Pin3);
+            Digital_ClrPin(Pin4);
+        }
+        else
+        {
+            Digital_SetPin(Pin4);
+            Digital_ClrPin(Pin3);
+        }
     }
     return 0;
 }
@@ -50,6 +51,7 @@ int main(void)
 //==================================================================================================
 static inline void Setup(void)
 {
-    Digital_PinInit(Pin3, IO_PORT_D, OUTPUT, 3);
-    Digital_PinInit(Pin4, IO_PORT_D, OUTPUT, 4);
+    Digital_PinInit(Pin3, IO_PORT_D, IO_MODE_OUTPUT, 3);
+    Digital_PinInit(Pin4, IO_PORT_D, IO_MODE_OUTPUT, 4);
+    Digital_PinInit(Pin5, IO_PORT_D, IO_MODE_INPUT, 5);
 }
