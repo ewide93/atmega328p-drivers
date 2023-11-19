@@ -14,6 +14,7 @@
 #include "types.h"
 #include "delay.h"
 #include "digital.h"
+#include "isr.h"
 
 
 //==================================================================================================
@@ -28,19 +29,11 @@ static inline void Setup(void);
 int main(void)
 {    
     Setup();
+    Digital_SetPin(Pin3);
 
     while (1)
     {
-        if (Digital_ReadPin(Pin5))
-        {
-            Digital_SetPin(Pin3);
-            Digital_ClrPin(Pin4);
-        }
-        else
-        {
-            Digital_SetPin(Pin4);
-            Digital_ClrPin(Pin3);
-        }
+
     }
     return 0;
 }
@@ -51,7 +44,8 @@ int main(void)
 //==================================================================================================
 static inline void Setup(void)
 {
+    Digital_PinInit(Pin2, IO_PORT_D, IO_MODE_INPUT, 2);
     Digital_PinInit(Pin3, IO_PORT_D, IO_MODE_OUTPUT, 3);
     Digital_PinInit(Pin4, IO_PORT_D, IO_MODE_OUTPUT, 4);
-    Digital_PinInit(Pin5, IO_PORT_D, IO_MODE_INPUT, 5);
+    ISR_ExternalInterruptInit(EXT_INT_0, EXT_INT_SC_RISING);
 }

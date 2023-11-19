@@ -46,9 +46,9 @@ typedef struct Digital_PinType
 //==================================================================================================
 // Declaration of object handles.
 //==================================================================================================
+extern Digital_PinType* Pin2;
 extern Digital_PinType* Pin3;
 extern Digital_PinType* Pin4;
-extern Digital_PinType* Pin5;
 
 
 //==================================================================================================

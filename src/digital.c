@@ -23,14 +23,14 @@
 //==================================================================================================
 // Definitions of static objects and external object handles.
 //==================================================================================================
+static Digital_PinType Local_Pin2 = { 0 };
+Digital_PinType* Pin2 = &Local_Pin2;
+
 static Digital_PinType Local_Pin3 = { 0 };
 Digital_PinType* Pin3 = &Local_Pin3;
 
 static Digital_PinType Local_Pin4 = { 0 };
 Digital_PinType* Pin4 = &Local_Pin4;
-
-static Digital_PinType Local_Pin5 = { 0 };
-Digital_PinType* Pin5 = &Local_Pin5;
 
 
 //==================================================================================================

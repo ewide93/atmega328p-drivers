@@ -4,6 +4,7 @@
 import os
 import subprocess
 import sys
+import serial.tools.list_ports
 
 
 #===================================================================================================
@@ -13,6 +14,9 @@ def main() -> None:
     # ATmega328p memory specifications.
     FLASH_SIZE_BYTES = 0x8000
     RAM_SIZE_BYTES   = 0x800
+
+    # HWID:s for my Arduino Nano devices.
+    ARDUINO_HWID_LIST = ['AB0LQH9QA', 'AB0P71KJA']
 
     # Get path to directory of running script.
     current_dir = os.path.dirname(__file__)
@@ -52,35 +56,18 @@ def main() -> None:
     else:
         print(f'Found .map file: {map_files[0]}')
 
-    # Find and print variables in .map-file.
-    with open(f'{build_dir}/{map_files[0]}', mode='r') as istream:
-        line_num = 1
-        for line in istream:
-            if line_num == 140:
-                tag, start, size = line.split()
-                print(int(size, base=16))
-            line_num += 1
+    # Placeholder, just printing contents of map file.
+    # with open(f'{build_dir}/{map_files[0]}', mode='r') as istream:
+    #     line_num = 1
+    #     for line in istream:
+    #         print(f'{line_num}: {line}')
+    #         line_num += 1
 
-
-        # parser_state = ParserState.READ
-        # line_print_cnt = 0
-        # for line in istream:
-        #     state_change = False
-        #     line_data = line.split()
-        #     with contextlib.suppress(IndexError):
-        #         if line_data[0] == '.data' and line_data[2] != '0x0' and len(line_data) == 4:
-        #             line_print_cnt = 2
-        #             parser_state = ParserState.PRINT
-        #             state_change = True
-        #         if parser_state == ParserState.PRINT and not state_change:
-        #             try:
-        #                 address, symbol = line_data
-        #                 print(f"Address: {address}  Symbol: {symbol}")
-        #             except ValueError:
-        #                 print(line_data)
-        #             line_print_cnt -= 1
-        #             if line_print_cnt == 0:
-        #                 parser_state = ParserState.READ
+    # Experiment with listing devices on COM ports.
+    ports = serial.tools.list_ports.comports()
+    for port in sorted(ports):
+        if port.hwid[-9:] in ARDUINO_HWID_LIST:
+            print(f'Arduino Nano found at {port.name}')
     
     # Exit program gracefully.
     sys.exit(0)
