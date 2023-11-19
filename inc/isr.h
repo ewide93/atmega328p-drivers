@@ -4,7 +4,6 @@
 //
 // Purpose:
 //
-//
 //==================================================================================================
 #ifndef _ISR_H_
 #define _ISR_H_
@@ -41,10 +40,36 @@ typedef enum EXT_INT_SC
 //==================================================================================================
 // Function prototypes.
 //==================================================================================================
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_GlobalInterruptEnable
+// Brief    : Enable interrupts globally.
+//--------------------------------------------------------------------------------------------------
 void ISR_GlobalInterruptEnable(void);
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_GlobalInterruptDisable
+// Brief    : Disable interrupts globally.
+//--------------------------------------------------------------------------------------------------
 void ISR_GlobalInterruptDisable(void);
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_ExternalInterruptInit
+// Brief    : Initialize an external interrupt.
+//--------------------------------------------------------------------------------------------------
 void ISR_ExternalInterruptInit(EXT_INT Interrupt, EXT_INT_SC SenseControl);
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_ExternalInterruptEnable
+// Brief    : Enable a specific external interrupt.
+//--------------------------------------------------------------------------------------------------
 void ISR_ExternalInterruptEnable(EXT_INT Interrupt);
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_ExternalInterruptDisable
+// Brief    : Disable a specific external interrupt.
+//--------------------------------------------------------------------------------------------------
 void ISR_ExternalInterruptDisable(EXT_INT Interrupt);
+
 
 #endif // _ISR_H_

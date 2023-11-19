@@ -47,5 +47,8 @@ static inline void Setup(void)
     Digital_PinInit(Pin2, IO_PORT_D, IO_MODE_INPUT, 2);
     Digital_PinInit(Pin3, IO_PORT_D, IO_MODE_OUTPUT, 3);
     Digital_PinInit(Pin4, IO_PORT_D, IO_MODE_OUTPUT, 4);
+
     ISR_ExternalInterruptInit(EXT_INT_0, EXT_INT_SC_RISING);
+    ISR_ExternalInterruptEnable(EXT_INT_0);
+    ISR_GlobalInterruptEnable();
 }
