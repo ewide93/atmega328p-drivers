@@ -29,7 +29,6 @@ static inline void Setup(void);
 int main(void)
 {    
     Setup();
-    Digital_SetPin(Pin3);
 
     while (1)
     {
@@ -45,10 +44,13 @@ int main(void)
 static inline void Setup(void)
 {
     Digital_PinInit(Pin2, IO_PORT_D, IO_MODE_INPUT, 2);
-    Digital_PinInit(Pin3, IO_PORT_D, IO_MODE_OUTPUT, 3);
+    Digital_PinInit(Pin3, IO_PORT_D, IO_MODE_INPUT, 3);
     Digital_PinInit(Pin4, IO_PORT_D, IO_MODE_OUTPUT, 4);
+    Digital_PinInit(Pin5, IO_PORT_D, IO_MODE_OUTPUT, 5);
 
-    ISR_ExternalInterruptInit(EXT_INT_0, EXT_INT_SC_RISING);
+    ISR_ExternalInterruptInit(EXT_INT_0, EXT_INT_SC_FALLING);
     ISR_ExternalInterruptEnable(EXT_INT_0);
+    ISR_ExternalInterruptInit(EXT_INT_1, EXT_INT_SC_FALLING);
+    ISR_ExternalInterruptEnable(EXT_INT_1);
     ISR_GlobalInterruptEnable();
 }

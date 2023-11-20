@@ -49,6 +49,7 @@ typedef struct Digital_PinType
 extern Digital_PinType* Pin2;
 extern Digital_PinType* Pin3;
 extern Digital_PinType* Pin4;
+extern Digital_PinType* Pin5;
 
 
 //==================================================================================================

@@ -100,7 +100,6 @@ void ISR_ExternalInterruptInit(EXT_INT Interrupt, EXT_INT_SC SenseControl)
 // Interrupt service routine for external interrupt request 0.
 ISR(INT0_vect)
 {
-    Digital_TogglePin(Pin3);
     Digital_TogglePin(Pin4);
     return;
 }
@@ -109,5 +108,6 @@ ISR(INT0_vect)
 // Interrupt service routine for external interrupt request 1.
 ISR(INT1_vect)
 {
+    Digital_TogglePin(Pin5);
     return;
 }
