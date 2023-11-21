@@ -18,6 +18,13 @@
 
 
 //==================================================================================================
+// Preprocessor definitions.
+//==================================================================================================
+#define EXT_INT0_VECTOR 0
+#define EXT_INT1_VECTOR 1
+
+
+//==================================================================================================
 // Definitions of enumerations and structures.
 //==================================================================================================
 
@@ -71,5 +78,6 @@ void ISR_ExternalInterruptEnable(EXT_INT Interrupt);
 //--------------------------------------------------------------------------------------------------
 void ISR_ExternalInterruptDisable(EXT_INT Interrupt);
 
+void ISR_AddInterruptHandler(VoidFunctionPtr Function, uint8_t Interrupt);
 
 #endif // _ISR_H_

@@ -23,6 +23,21 @@
 
 
 //==================================================================================================
+// Static function definitions.
+//==================================================================================================
+static void ISR_NullHandler(void)
+{
+    return;
+}
+
+
+//==================================================================================================
+// Local variables.
+//==================================================================================================
+static VoidFunctionPtr InterruptHandlers[2] = { ISR_NullHandler, ISR_NullHandler};
+
+
+//==================================================================================================
 // Function definitions.
 //==================================================================================================
 void ISR_GlobalInterruptEnable(void)
@@ -92,6 +107,10 @@ void ISR_ExternalInterruptInit(EXT_INT Interrupt, EXT_INT_SC SenseControl)
     }
 }
 
+void ISR_AddInterruptHandler(VoidFunctionPtr Function, uint8_t Interrupt)
+{
+    InterruptHandlers[Interrupt] = Function;
+}
 
 //==================================================================================================
 // Interrupt service routines.
@@ -100,7 +119,8 @@ void ISR_ExternalInterruptInit(EXT_INT Interrupt, EXT_INT_SC SenseControl)
 // Interrupt service routine for external interrupt request 0.
 ISR(INT0_vect)
 {
-    Digital_TogglePin(Pin4);
+    // Digital_TogglePin(Pin4);
+    InterruptHandlers[EXT_INT0_VECTOR]();
     return;
 }
 
@@ -108,6 +128,7 @@ ISR(INT0_vect)
 // Interrupt service routine for external interrupt request 1.
 ISR(INT1_vect)
 {
-    Digital_TogglePin(Pin5);
+    // Digital_TogglePin(Pin5);
+    InterruptHandlers[EXT_INT1_VECTOR]();
     return;
 }
