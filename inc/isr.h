@@ -14,19 +14,46 @@
 //==================================================================================================
 #include "types.h"
 #include "hw_cfg.h"
-#include <avr/interrupt.h>
 
 
 //==================================================================================================
 // Preprocessor definitions.
 //==================================================================================================
-#define EXT_INT0_VECTOR 0
-#define EXT_INT1_VECTOR 1
 
 
 //==================================================================================================
 // Definitions of enumerations and structures.
 //==================================================================================================
+
+// Interrupt Vector
+typedef enum INTERRUPT_VECTOR
+{
+    INTERRUPT_VECTOR_EXT_INT0,
+    INTERRUPT_VECTOR_EXT_INT1,
+    INTERRUPT_VECTOR_PC_INT0,
+    INTERRUPT_VECTOR_PC_INT1,
+    INTERRUPT_VECTOR_PC_INT2,
+    INTERRUPT_VECTOR_WDT,
+    INTERRUPT_VECTOR_TIM2_COMPA,
+    INTERRUPT_VECTOR_TIM2_COMPB,
+    INTERRUPT_VECTOR_TIM2_OVF,
+    INTERRUPT_VECTOR_TIM1_CAPT,
+    INTERRUPT_VECTOR_TIM1_COMPA,
+    INTERRUPT_VECTOR_TIM1_COMPB,
+    INTERRUPT_VECTOR_TIM1_OVF,
+    INTERRUPT_VECTOR_TIM0_COMPA,
+    INTERRUPT_VECTOR_TIM0_COMPB,
+    INTERRUPT_VECTOR_TIM0_OVF,
+    INTERRUPT_VECTOR_SPI_STC,
+    INTERRUPT_VECTOR_USART_RX,
+    INTERRUPT_VECTOR_USART_DRE,
+    INTERRUPT_VECTOR_USART_TX,
+    INTERRUPT_VECTOR_ADC,
+    INTERRUPT_VECTOR_EE_RDY,
+    INTERRUPT_VECTOR_ACOMP,
+    INTERRUPT_VECTOR_TWI,
+    INTERRUPT_VECTOR_SPM_RDY,
+} INTERRUPT_VECTOR;
 
 // External Interrupt
 typedef enum EXT_INT
@@ -78,6 +105,10 @@ void ISR_ExternalInterruptEnable(EXT_INT Interrupt);
 //--------------------------------------------------------------------------------------------------
 void ISR_ExternalInterruptDisable(EXT_INT Interrupt);
 
-void ISR_AddInterruptHandler(VoidFunctionPtr Function, uint8_t Interrupt);
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_AddInterruptHandler
+// Brief    : Make specified function the interrupt handler of the given interrupt.
+//--------------------------------------------------------------------------------------------------
+void ISR_AddInterruptHandler(VoidFunctionPtr Function, INTERRUPT_VECTOR InterruptVector);
 
 #endif // _ISR_H_

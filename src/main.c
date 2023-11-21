@@ -21,8 +21,8 @@
 // Static function prototypes.
 //==================================================================================================
 static inline void Setup(void);
-void ExternalInterrupt0Handler(void);
-void ExternalInterrupt1Handler(void);
+static void ExternalInterrupt0Handler(void);
+static void ExternalInterrupt1Handler(void);
 
 
 //==================================================================================================
@@ -44,13 +44,13 @@ int main(void)
 // Static function definitions.
 //==================================================================================================
 
-void ExternalInterrupt0Handler(void)
+static void ExternalInterrupt0Handler(void)
 {
     Digital_TogglePin(Pin4);
 }
 
 
-void ExternalInterrupt1Handler(void)
+static void ExternalInterrupt1Handler(void)
 {
     Digital_TogglePin(Pin5);
 }
@@ -64,11 +64,11 @@ static inline void Setup(void)
     Digital_PinInit(Pin5, IO_PORT_D, IO_MODE_OUTPUT, 5);
 
     ISR_ExternalInterruptInit(EXT_INT_0, EXT_INT_SC_FALLING);
-    ISR_AddInterruptHandler(ExternalInterrupt0Handler, EXT_INT0_VECTOR);
+    ISR_AddInterruptHandler(ExternalInterrupt0Handler, INTERRUPT_VECTOR_EXT_INT0);
     ISR_ExternalInterruptEnable(EXT_INT_0);
 
     ISR_ExternalInterruptInit(EXT_INT_1, EXT_INT_SC_FALLING);
-    ISR_AddInterruptHandler(ExternalInterrupt1Handler, EXT_INT1_VECTOR);
+    ISR_AddInterruptHandler(ExternalInterrupt1Handler, INTERRUPT_VECTOR_EXT_INT1);
     ISR_ExternalInterruptEnable(EXT_INT_1);
     ISR_GlobalInterruptEnable();
 }
