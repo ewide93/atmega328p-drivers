@@ -46,10 +46,62 @@ typedef struct Digital_PinType
 //==================================================================================================
 // Declaration of object handles.
 //==================================================================================================
-extern Digital_PinType* Pin2;
-extern Digital_PinType* Pin3;
-extern Digital_PinType* Pin4;
-extern Digital_PinType* Pin5;
+#ifdef DIGITAL_PIN_0
+    extern Digital_PinType* Pin0;
+#endif
+
+#if defined(DIGITAL_PIN_1)
+    extern Digital_PinType* Pin1;
+#endif
+
+#if defined(DIGITAL_PIN_2)
+    extern Digital_PinType* Pin2;
+#endif
+
+#if defined(DIGITAL_PIN_3)
+    extern Digital_PinType* Pin3;
+#endif
+
+#if defined(DIGITAL_PIN_4)
+    extern Digital_PinType* Pin4;
+#endif
+
+#if defined(DIGITAL_PIN_5)
+    extern Digital_PinType* Pin5;
+#endif
+
+#if defined(DIGITAL_PIN_6)
+    extern Digital_PinType* Pin6;
+#endif
+
+#if defined(DIGITAL_PIN_7)
+    extern Digital_PinType* Pin7;
+#endif
+
+#if defined(DIGITAL_PIN_8)
+    extern Digital_PinType* Pin8;
+#endif
+
+#if defined(DIGITAL_PIN_9)
+    extern Digital_PinType* Pin9;
+#endif
+
+#if defined(DIGITAL_PIN_10)
+    extern Digital_PinType* Pin10;
+#endif
+
+#if defined(DIGITAL_PIN_11)
+    extern Digital_PinType* Pin11;
+#endif
+
+#if defined(DIGITAL_PIN_12)
+    extern Digital_PinType* Pin12;
+#endif
+
+#if defined(DIGITAL_PIN_13)
+    extern Digital_PinType* Pin13;
+#endif
+
 
 
 //==================================================================================================

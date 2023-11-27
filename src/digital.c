@@ -23,17 +23,132 @@
 //==================================================================================================
 // Definitions of static objects and external object handles.
 //==================================================================================================
-static Digital_PinType Local_Pin2 = { 0 };
-Digital_PinType* Pin2 = &Local_Pin2;
+#if defined(DIGITAL_PIN_0)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin0 = { 0 };
+        Digital_PinType* Pin0 = &Local_Pin0;
+    #endif
+#endif
 
-static Digital_PinType Local_Pin3 = { 0 };
-Digital_PinType* Pin3 = &Local_Pin3;
+#if defined(DIGITAL_PIN_1)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin1 = { 0 };
+        Digital_PinType* Pin1 = &Local_Pin1;
+    #endif
+#endif
 
-static Digital_PinType Local_Pin4 = { 0 };
-Digital_PinType* Pin4 = &Local_Pin4;
+#if defined(DIGITAL_PIN_2)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin2 = { 0 };
+        Digital_PinType* Pin2 = &Local_Pin2;
+    #endif
+#endif
 
-static Digital_PinType Local_Pin5 = { 0 };
-Digital_PinType* Pin5 = &Local_Pin5;
+#if defined(DIGITAL_PIN_3)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin3 = { 0 };
+        Digital_PinType* Pin3 = &Local_Pin3;
+    #endif
+#endif
+
+
+#if defined(DIGITAL_PIN_4)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin4 = { 0 };
+        Digital_PinType* Pin4 = &Local_Pin4;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_5)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin5 = { 0 };
+        Digital_PinType* Pin5 = &Local_Pin5;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_6)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin6 = { 0 };
+        Digital_PinType* Pin6 = &Local_Pin6;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_7)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin7 = { 0 };
+        Digital_PinType* Pin7 = &Local_Pin7;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_8)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin8 = { 0 };
+        Digital_PinType* Pin8 = &Local_Pin8;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_9)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin9 = { 0 };
+        Digital_PinType* Pin9 = &Local_Pin9;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_10)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin10 = { 0 };
+        Digital_PinType* Pin10 = &Local_Pin10;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_11)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin11 = { 0 };
+        Digital_PinType* Pin11 = &Local_Pin11;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_12)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin12 = { 0 };
+        Digital_PinType* Pin12 = &Local_Pin12;
+    #endif
+#endif
+
+#if defined(DIGITAL_PIN_13)
+    #if defined(CONFLICTING_PIN) || defined(ANOTHER_CONFILCTING_PIN)
+        #error "Conflicting pin assignment."
+    #else
+        static Digital_PinType Local_Pin13 = { 0 };
+        Digital_PinType* Pin13 = &Local_Pin13;
+    #endif
+#endif
 
 
 //==================================================================================================
