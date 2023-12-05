@@ -18,8 +18,8 @@
 //==================================================================================================
 // Function prototypes.
 //==================================================================================================
-void BlockingDelay_ms(uint16_t Delay_ms);
-void BlockingDelay_us(uint16_t Delay_us);
+void BlockingDelay_ms(U16 Delay_ms);
+void BlockingDelay_us(U16 Delay_us);
 
 
 #endif // _DELAY_H_

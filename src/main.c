@@ -23,16 +23,18 @@
 static inline void Setup(void);
 static void ExternalInterrupt0Handler(void);
 static void ExternalInterrupt1Handler(void);
+static void Timer0_CompareAHandler(void);
+static void Timer0_CompareBHandler(void);
 
 
 //==================================================================================================
 // Main program entry-point.
 //==================================================================================================
 int main(void)
-{    
+{
     Setup();
 
-    while (1)
+    while (true)
     {
 
     }
@@ -46,13 +48,33 @@ int main(void)
 
 static void ExternalInterrupt0Handler(void)
 {
-    Digital_TogglePin(Pin4);
+    TIMSK0 ^= (1 << OCIE0A);
 }
 
 
 static void ExternalInterrupt1Handler(void)
 {
-    Digital_TogglePin(Pin5);
+    TIMSK0 ^= (1 << OCIE0B);
+}
+
+static void Timer0_CompareAHandler(void)
+{
+    static U16 cnt = 0;
+    if (cnt++ > 50)
+    {
+        Digital_TogglePin(Pin4);
+        cnt = 0;
+    }
+}
+
+static void Timer0_CompareBHandler(void)
+{
+    static U16 cnt = 0;
+    if (cnt++ > 50)
+    {
+        Digital_TogglePin(Pin5);
+        cnt = 0;
+    }
 }
 
 
@@ -70,5 +92,14 @@ static inline void Setup(void)
     ISR_ExternalInterruptInit(EXT_INT_1, EXT_INT_SC_FALLING);
     ISR_AddInterruptHandler(ExternalInterrupt1Handler, INTERRUPT_VECTOR_EXT_INT1);
     ISR_ExternalInterruptEnable(EXT_INT_1);
+
+    TCCR0A |= (1 << WGM01);
+    TCCR0B |= (1 << CS02);
+    OCR0A = 125;
+    OCR0B = 125;
+    TIMSK0 |= ((1 << OCIE0A) | (1 << OCIE0B));
+    ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
+    ISR_AddInterruptHandler(Timer0_CompareBHandler, INTERRUPT_VECTOR_TIM0_COMPB);
+
     ISR_GlobalInterruptEnable();
 }

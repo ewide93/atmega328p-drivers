@@ -154,7 +154,7 @@
 //==================================================================================================
 // Function definitions.
 //==================================================================================================
-void Digital_PinInit(Digital_PinType* PinPtr, enum IO_PORT Port, enum IO_MODE Mode, uint8_t PinNum)
+void Digital_PinInit(Digital_PinType* PinPtr, enum IO_PORT Port, enum IO_MODE Mode, U8 PinNum)
 {
     if (PinPtr->PinNum > PIN_NUM_MAX) return;
     if (Port == IO_PORT_C && PinPtr->PinNum > (PIN_NUM_MAX - 1)) return;

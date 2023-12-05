@@ -24,6 +24,25 @@
 //==================================================================================================
 // Structures and enumerations
 //==================================================================================================
+typedef struct
+{
+    volatile U8* CtrlRegA;
+    volatile U8* CtrlRegB;
+    volatile U8* OutputCompRegA;
+    volatile U8* OutputCompRegB;
+    volatile U8* IntMaskReg;
+} Timer_8BitType;
+
+typedef struct
+{
+    volatile U8* CtrlRegA;
+    volatile U8* CtrlRegB;
+    volatile U8* CtrlRegC;
+    volatile U16* OutputCompRegA;
+    volatile U16* OutputCompRegB;
+    volatile U16* InputCaptureReg;
+    volatile U8* IntMaskReg;
+} Timer_16BitType;
 
 
 //==================================================================================================

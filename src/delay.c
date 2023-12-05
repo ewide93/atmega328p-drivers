@@ -15,18 +15,18 @@
 //==================================================================================================
 // Function definitions.
 //==================================================================================================
-void BlockingDelay_ms(uint16_t Delay_ms)
+void BlockingDelay_ms(U16 Delay_ms)
 {
-    for (uint16_t i = 0; i < Delay_ms; i++)
+    for (U16 i = 0; i < Delay_ms; i++)
     {
         _delay_ms(1);
     }
     return;
 }
 
-void BlockingDelay_us(uint16_t Delay_us)
+void BlockingDelay_us(U16 Delay_us)
 {
-    for (uint16_t i = 0; i < Delay_us; i++)
+    for (U16 i = 0; i < Delay_us; i++)
     {
         _delay_us(1);
     }

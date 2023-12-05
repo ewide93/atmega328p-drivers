@@ -6,7 +6,7 @@
 //          the configuration and use of digital pins.
 //
 //==================================================================================================
-#ifndef _DIGITAL_H
+#ifndef _DIGITAL_H_
 #define _DIGITAL_H_
 
 
@@ -36,10 +36,10 @@ typedef enum IO_PORT
 
 typedef struct Digital_PinType
 {
-    volatile uint8_t* PORT;
-    volatile uint8_t* DDR;
-    volatile uint8_t* PIN;
-    uint8_t PinNum;
+    volatile U8* PORT;
+    volatile U8* DDR;
+    volatile U8* PIN;
+    U8 PinNum;
 } Digital_PinType;
 
 
@@ -107,7 +107,7 @@ typedef struct Digital_PinType
 //==================================================================================================
 // Function prototypes.
 //==================================================================================================
-void Digital_PinInit(Digital_PinType* PinPtr, enum IO_PORT Port, enum IO_MODE Mode, uint8_t PinNum);
+void Digital_PinInit(Digital_PinType* PinPtr, enum IO_PORT Port, enum IO_MODE Mode, U8 PinNum);
 void Digital_SetPin(Digital_PinType* PinPtr);
 void Digital_ClrPin(Digital_PinType* PinPtr);
 void Digital_TogglePin(Digital_PinType* PinPtr);
