@@ -2,7 +2,7 @@
 //
 // File name: timer.h
 //
-// Purpose: 
+// Purpose:
 //
 //==================================================================================================
 #ifndef _TIMER_H_
@@ -24,31 +24,41 @@
 //==================================================================================================
 // Structures and enumerations
 //==================================================================================================
-typedef struct
+typedef struct Timer_8BitType
 {
-    volatile U8* CtrlRegA;
-    volatile U8* CtrlRegB;
-    volatile U8* OutputCompRegA;
-    volatile U8* OutputCompRegB;
-    volatile U8* IntMaskReg;
+    volatile uint8_t* OutputCompRegA;
+    volatile uint8_t* OutputCompRegB;
+    volatile uint8_t* CtrlRegA;
+    volatile uint8_t* CtrlRegB;
+    volatile uint8_t* IntMaskReg;
 } Timer_8BitType;
 
-typedef struct
+typedef struct Timer_16BitType
 {
-    volatile U8* CtrlRegA;
-    volatile U8* CtrlRegB;
-    volatile U8* CtrlRegC;
-    volatile U16* OutputCompRegA;
-    volatile U16* OutputCompRegB;
-    volatile U16* InputCaptureReg;
-    volatile U8* IntMaskReg;
+    volatile uint16_t* OutputCompRegA;
+    volatile uint16_t* OutputCompRegB;
+    volatile uint16_t* InputCaptureReg;
+    volatile uint8_t* CtrlRegA;
+    volatile uint8_t* CtrlRegB;
+    volatile uint8_t* CtrlRegC;
+    volatile uint8_t* IntMaskReg;
 } Timer_16BitType;
 
 
 //==================================================================================================
 // External variable declarations
 //==================================================================================================
+#if defined(TIMER_0)
+    extern Timer_8BitType* Timer0;
+#endif
 
+#if defined(TIMER_1)
+    extern Timer_16BitType* Timer1;
+#endif
+
+#if defined(TIMER_2)
+    extern Timer_8BitType* Timer2;
+#endif
 
 //==================================================================================================
 // Function prototypes

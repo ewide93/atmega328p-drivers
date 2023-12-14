@@ -2,7 +2,7 @@
 //
 // File name: timer.c
 //
-// Purpose: 
+// Purpose:
 //
 //==================================================================================================
 
@@ -36,7 +36,43 @@
 //==================================================================================================
 // External variable definitions
 //==================================================================================================
+#if defined(TIMER_0)
+    static Timer_8BitType Local_Timer0 =
+    {
+        .OutputCompRegA = &OCR0A,
+        .OutputCompRegB = &OCR0B,
+        .CtrlRegA = &TCCR0A,
+        .CtrlRegB = &TCCR0B,
+        .IntMaskReg = &TIMSK0
+    };
+    Timer_8BitType* Timer0 = &Local_Timer0;
+#endif
 
+#if defined(TIMER_1)
+    static Timer_16BitType Local_Timer1 =
+    {
+        .OutputCompRegA = &OCR1A,
+        .OutputCompRegB = &OCR1B,
+        .InputCaptureReg = &ICR1,
+        .CtrlRegA = &TCCR1A,
+        .CtrlRegB = &TCCR1B,
+        .CtrlRegC = &TCCR1C,
+        .IntMaskReg = &TIMSK1
+    };
+    Timer_16BitType* Timer1 = &Local_Timer1;
+#endif
+
+#if defined(TIMER_2)
+    static Timer_8BitType Local_Timer2 =
+    {
+        .OutputCompRegA = &OCR2A,
+        .OutputCompRegB = &OCR2B,
+        .CtrlRegA = &TCCR2A,
+        .CtrlRegB = &TCCR2B,
+        .IntMaskReg = &TIMSK2
+    };
+    Timer_8BitType* Timer2 = &Local_Timer2;
+#endif
 
 //==================================================================================================
 // Local function definitions

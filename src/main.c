@@ -15,6 +15,7 @@
 #include "delay.h"
 #include "digital.h"
 #include "isr.h"
+#include "timer.h"
 
 
 //==================================================================================================
@@ -59,7 +60,7 @@ static void ExternalInterrupt1Handler(void)
 
 static void Timer0_CompareAHandler(void)
 {
-    static U16 cnt = 0;
+    static uint16_t cnt = 0;
     if (cnt++ > 50)
     {
         Digital_TogglePin(Pin4);
@@ -69,7 +70,7 @@ static void Timer0_CompareAHandler(void)
 
 static void Timer0_CompareBHandler(void)
 {
-    static U16 cnt = 0;
+    static uint16_t cnt = 0;
     if (cnt++ > 50)
     {
         Digital_TogglePin(Pin5);
@@ -80,10 +81,10 @@ static void Timer0_CompareBHandler(void)
 
 static inline void Setup(void)
 {
-    Digital_PinInit(Pin2, IO_PORT_D, IO_MODE_INPUT, 2);
-    Digital_PinInit(Pin3, IO_PORT_D, IO_MODE_INPUT, 3);
-    Digital_PinInit(Pin4, IO_PORT_D, IO_MODE_OUTPUT, 4);
-    Digital_PinInit(Pin5, IO_PORT_D, IO_MODE_OUTPUT, 5);
+    Digital_PinInit(Pin2, IO_MODE_INPUT);
+    Digital_PinInit(Pin3, IO_MODE_INPUT);
+    Digital_PinInit(Pin4, IO_MODE_OUTPUT);
+    Digital_PinInit(Pin5, IO_MODE_OUTPUT);
 
     ISR_ExternalInterruptInit(EXT_INT_0, EXT_INT_SC_FALLING);
     ISR_AddInterruptHandler(ExternalInterrupt0Handler, INTERRUPT_VECTOR_EXT_INT0);

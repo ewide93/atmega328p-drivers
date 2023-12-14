@@ -34,84 +34,39 @@ typedef enum IO_PORT
     IO_PORT_D
 } IO_PORT;
 
-typedef struct Digital_PinType
+typedef struct
 {
-    volatile U8* PORT;
-    volatile U8* DDR;
-    volatile U8* PIN;
-    U8 PinNum;
-} Digital_PinType;
+    volatile uint8_t PIN;
+    volatile uint8_t DDR;
+    volatile uint8_t PORT;
+} IOPortType;
+
+typedef struct
+{
+    IOPortType* IOPort;
+    uint8_t PinNum;
+} PinType;
 
 
 //==================================================================================================
-// Declaration of object handles.
+// External variables
 //==================================================================================================
-#ifdef DIGITAL_PIN_0
-    extern Digital_PinType* Pin0;
-#endif
-
-#if defined(DIGITAL_PIN_1)
-    extern Digital_PinType* Pin1;
-#endif
-
-#if defined(DIGITAL_PIN_2)
-    extern Digital_PinType* Pin2;
-#endif
-
-#if defined(DIGITAL_PIN_3)
-    extern Digital_PinType* Pin3;
-#endif
-
-#if defined(DIGITAL_PIN_4)
-    extern Digital_PinType* Pin4;
-#endif
-
-#if defined(DIGITAL_PIN_5)
-    extern Digital_PinType* Pin5;
-#endif
-
-#if defined(DIGITAL_PIN_6)
-    extern Digital_PinType* Pin6;
-#endif
-
-#if defined(DIGITAL_PIN_7)
-    extern Digital_PinType* Pin7;
-#endif
-
-#if defined(DIGITAL_PIN_8)
-    extern Digital_PinType* Pin8;
-#endif
-
-#if defined(DIGITAL_PIN_9)
-    extern Digital_PinType* Pin9;
-#endif
-
-#if defined(DIGITAL_PIN_10)
-    extern Digital_PinType* Pin10;
-#endif
-
-#if defined(DIGITAL_PIN_11)
-    extern Digital_PinType* Pin11;
-#endif
-
-#if defined(DIGITAL_PIN_12)
-    extern Digital_PinType* Pin12;
-#endif
-
-#if defined(DIGITAL_PIN_13)
-    extern Digital_PinType* Pin13;
-#endif
-
+extern IOPortType* IOPortB;
+extern IOPortType* IOPortC;
+extern IOPortType* IOPortD;
+extern PinType* Pin2;
+extern PinType* Pin3;
+extern PinType* Pin4;
+extern PinType* Pin5;
 
 
 //==================================================================================================
 // Function prototypes.
 //==================================================================================================
-void Digital_PinInit(Digital_PinType* PinPtr, enum IO_PORT Port, enum IO_MODE Mode, U8 PinNum);
-void Digital_SetPin(Digital_PinType* PinPtr);
-void Digital_ClrPin(Digital_PinType* PinPtr);
-void Digital_TogglePin(Digital_PinType* PinPtr);
-bool Digital_ReadPin(Digital_PinType* PinPtr);
+void Digital_PinInit(PinType* Pin, enum IO_MODE Mode);
+void Digital_SetPin(PinType* Pin);
+void Digital_TogglePin(PinType* Pin);
+bool Digital_ReadPin(PinType* Pin);
 
 
 #endif // _DIGITAL_H_
