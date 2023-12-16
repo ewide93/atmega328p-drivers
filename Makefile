@@ -45,9 +45,12 @@ F_CPU := 16000000UL
 
 CFLAGS = -Wall -Werror -Wextra -Wunused-variable -std=gnu99 -I$(INC_DIR)
 CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+CFLAGS += -ffunction-sections -fdata-sections -g3
 DFLAGS = -MMD -MP
 LDFLAGS += -mmcu=$(MCU) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map -Wl,--cref
-OPT := -O2
+LDFLAGS += -Wl,--gc-sections
+# LDFLAGS += -Wl,--print-gc-sections
+OPT := -Os
 
 #================================================================================
 # Rule to invoke all rules necessary to produce the .hex-file.
