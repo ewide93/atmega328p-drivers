@@ -34,6 +34,8 @@ static void Timer0_CompareBHandler(void);
 int main(void)
 {
     Setup();
+    // ((Timer0Type*)(Timer0->Timer))->CntReg = 0xFA;
+    // ((Timer0Type*)Timer0->Timer)->CntReg |= 0b11;
 
     while (true)
     {
@@ -94,10 +96,7 @@ static inline void Setup(void)
     ISR_AddInterruptHandler(ExternalInterrupt1Handler, INTERRUPT_VECTOR_EXT_INT1);
     ISR_ExternalInterruptEnable(EXT_INT_1);
 
-    TCCR0A |= (1 << WGM01);
-    TCCR0B |= (1 << CS02);
-    OCR0A = 125;
-    OCR0B = 125;
+    Timer_Init(Timer0, TIMER_MODE_NORMAL);
     TIMSK0 |= ((1 << OCIE0A) | (1 << OCIE0B));
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
     ISR_AddInterruptHandler(Timer0_CompareBHandler, INTERRUPT_VECTOR_TIM0_COMPB);

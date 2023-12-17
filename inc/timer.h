@@ -22,47 +22,72 @@
 
 
 //==================================================================================================
-// Structures and enumerations
+// Structure definitions
 //==================================================================================================
-typedef struct Timer_8BitType
+typedef struct Timer0Type
 {
-    volatile uint8_t* OutputCompRegA;
-    volatile uint8_t* OutputCompRegB;
-    volatile uint8_t* CtrlRegA;
-    volatile uint8_t* CtrlRegB;
-    volatile uint8_t* IntMaskReg;
-} Timer_8BitType;
+    volatile uint8_t CtrlRegA;
+    volatile uint8_t CtrlRegB;
+    volatile uint8_t CntReg;
+    volatile uint8_t OutCompRegA;
+    volatile uint8_t OutCompRegB;
+} Timer0Type;
 
-typedef struct Timer_16BitType
+typedef struct Timer1Type
 {
-    volatile uint16_t* OutputCompRegA;
-    volatile uint16_t* OutputCompRegB;
-    volatile uint16_t* InputCaptureReg;
-    volatile uint8_t* CtrlRegA;
-    volatile uint8_t* CtrlRegB;
-    volatile uint8_t* CtrlRegC;
-    volatile uint8_t* IntMaskReg;
-} Timer_16BitType;
+    volatile uint8_t CtrlRegA;
+    volatile uint8_t CtrlRegB;
+    volatile uint8_t CtrlRegC;
+    volatile const uint8_t PadByte;
+    volatile uint16_t CntReg;
+    volatile uint16_t InputCaptReg;
+    volatile uint16_t OutCompRegA;
+    volatile uint16_t OutCompRegB;
+} Timer1Type;
+
+typedef struct Timer2Type
+{
+    volatile uint8_t CtrlRegA;
+    volatile uint8_t CtrlRegB;
+    volatile uint8_t CntReg;
+    volatile uint8_t OutCompRegA;
+    volatile uint8_t OutCompRegB;
+    volatile const uint8_t PadByte;
+    volatile uint8_t AsyncStatusReg;
+} Timer2Type;
+
+typedef struct TimerType
+{
+    void* Timer;
+    uint8_t TimerID;
+} TimerType;
+
+
+//==================================================================================================
+// Enumerations
+//==================================================================================================
+typedef enum TIMER_MODE
+{
+    TIMER_MODE_NORMAL,
+    TIMER_MODE_CTC,
+    TIMER_MODE_FAST_PWM,
+    TIMER_MODE_PHASE_CORRECT_PWM,
+    TIMER_MODE_PHASE_FREQ_CORRECT_PWM,
+} TIMER_MODE;
 
 
 //==================================================================================================
 // External variable declarations
 //==================================================================================================
-#if defined(TIMER_0)
-    extern Timer_8BitType* Timer0;
-#endif
+extern TimerType* Timer0;
+extern TimerType* Timer1;
+extern TimerType* Timer2;
 
-#if defined(TIMER_1)
-    extern Timer_16BitType* Timer1;
-#endif
-
-#if defined(TIMER_2)
-    extern Timer_8BitType* Timer2;
-#endif
 
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
+void Timer_Init(TimerType* Timer, enum TIMER_MODE Mode);
 
 
 #endif // _TIMER_H_

@@ -27,18 +27,11 @@ typedef enum IO_MODE
     IO_MODE_OUTPUT
 } IO_MODE;
 
-typedef enum IO_PORT
-{
-    IO_PORT_B,
-    IO_PORT_C,
-    IO_PORT_D
-} IO_PORT;
-
 typedef struct
 {
-    volatile uint8_t PIN;
-    volatile uint8_t DDR;
-    volatile uint8_t PORT;
+    volatile uint8_t InputPinReg;
+    volatile uint8_t DataDirReg;
+    volatile uint8_t DataReg;
 } IOPortType;
 
 typedef struct
@@ -51,13 +44,18 @@ typedef struct
 //==================================================================================================
 // External variables
 //==================================================================================================
-extern IOPortType* IOPortB;
-extern IOPortType* IOPortC;
-extern IOPortType* IOPortD;
 extern PinType* Pin2;
 extern PinType* Pin3;
 extern PinType* Pin4;
 extern PinType* Pin5;
+extern PinType* Pin6;
+extern PinType* Pin7;
+extern PinType* Pin8;
+extern PinType* Pin9;
+extern PinType* Pin10;
+extern PinType* Pin11;
+extern PinType* Pin12;
+extern PinType* Pin13;
 
 
 //==================================================================================================

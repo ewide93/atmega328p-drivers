@@ -26,10 +26,6 @@
 //==================================================================================================
 // Definition of external variables
 //==================================================================================================
-IOPortType* IOPortB = IO_PORT_B_ADDRESS;
-IOPortType* IOPortC = IO_PORT_C_ADDRESS;
-IOPortType* IOPortD = IO_PORT_D_ADDRESS;
-
 static PinType Pin2_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 2 };
 PinType* Pin2 = &Pin2_Local;
 
@@ -41,6 +37,30 @@ PinType* Pin4 = &Pin4_Local;
 
 static PinType Pin5_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 5 };
 PinType* Pin5 = &Pin5_Local;
+
+static PinType Pin6_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 6 };
+PinType* Pin6 = &Pin6_Local;
+
+static PinType Pin7_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 7 };
+PinType* Pin7 = &Pin7_Local;
+
+static PinType Pin8_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 0 };
+PinType* Pin8 = &Pin8_Local;
+
+static PinType Pin9_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 1 };
+PinType* Pin9 = &Pin9_Local;
+
+static PinType Pin10_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 2 };
+PinType* Pin10 = &Pin10_Local;
+
+static PinType Pin11_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 3 };
+PinType* Pin11 = &Pin11_Local;
+
+static PinType Pin12_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 4 };
+PinType* Pin12 = &Pin12_Local;
+
+static PinType Pin13_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 5 };
+PinType* Pin13 = &Pin13_Local;
 
 
 //==================================================================================================
@@ -54,32 +74,32 @@ void Digital_PinInit(PinType* Pin, enum IO_MODE Mode)
     switch (Mode)
     {
         case IO_MODE_INPUT: { break; }
-        case IO_MODE_INPUT_PULLUP: { Pin->IOPort->PORT |= (1 << Pin->PinNum); break; }
-        case IO_MODE_OUTPUT: { Pin->IOPort->DDR |= (1 << Pin->PinNum); break; }
+        case IO_MODE_INPUT_PULLUP: { Pin->IOPort->DataReg |= (1 << Pin->PinNum); break; }
+        case IO_MODE_OUTPUT: { Pin->IOPort->DataDirReg |= (1 << Pin->PinNum); break; }
         default: { break; }
     }
 }
 
 void Digital_SetPin(PinType* Pin)
 {
-    Pin->IOPort->PORT |= (1 << Pin->PinNum);
+    Pin->IOPort->DataReg |= (1 << Pin->PinNum);
     return;
 }
 
 void Digital_ClrPin(PinType* Pin)
 {
-    Pin->IOPort->PORT &= ~(1 << Pin->PinNum);
+    Pin->IOPort->DataReg &= ~(1 << Pin->PinNum);
     return;
 }
 
 void Digital_TogglePin(PinType* Pin)
 {
-    Pin->IOPort->PORT ^= (1 << Pin->PinNum);
+    Pin->IOPort->DataReg ^= (1 << Pin->PinNum);
     return;
 }
 
 bool Digital_ReadPin(PinType* Pin)
 {
-    return Pin->IOPort->PIN & (1 << Pin->PinNum);
+    return Pin->IOPort->InputPinReg & (1 << Pin->PinNum);
 }
 
