@@ -19,41 +19,43 @@
 //==================================================================================================
 // Preprocessor definitions
 //==================================================================================================
-
+#define Timer0 ((Timer0Type*)Timer0Handle->Timer)
+#define Timer1 ((Timer1Type*)Timer1Handle->Timer)
+#define Timer2 ((Timer2Type*)Timer2Handle->Timer)
 
 //==================================================================================================
 // Structure definitions
 //==================================================================================================
-typedef struct Timer0Type
+typedef struct Timer0Type            /* Memory mapped I/O structure for Timer 0   */
 {
-    volatile uint8_t CtrlRegA;
-    volatile uint8_t CtrlRegB;
-    volatile uint8_t CntReg;
-    volatile uint8_t OutCompRegA;
-    volatile uint8_t OutCompRegB;
+    volatile uint8_t CtrlRegA;       /* TCCR0A – Timer/Counter Control Register A */
+    volatile uint8_t CtrlRegB;       /* TCCR0B – Timer/Counter Control Register B */
+    volatile uint8_t CntReg;         /* TCNT0  – Timer/Counter Register           */
+    volatile uint8_t OutCompRegA;    /* OCR0A  – Output Compare Register A        */
+    volatile uint8_t OutCompRegB;    /* OCR0B  – Output Compare Register B        */
 } Timer0Type;
 
-typedef struct Timer1Type
+typedef struct Timer1Type              /* Memory mapped I/O structure for Timer 1    */
 {
-    volatile uint8_t CtrlRegA;
-    volatile uint8_t CtrlRegB;
-    volatile uint8_t CtrlRegC;
-    volatile const uint8_t PadByte;
-    volatile uint16_t CntReg;
-    volatile uint16_t InputCaptReg;
-    volatile uint16_t OutCompRegA;
-    volatile uint16_t OutCompRegB;
+    volatile uint8_t CtrlRegA;         /* TCCR1A – Timer/Counter1 Control Register A */
+    volatile uint8_t CtrlRegB;         /* TCCR1B – Timer/Counter1 Control Register B */
+    volatile uint8_t CtrlRegC;         /* TCCR1C – Timer/Counter1 Control Register C */
+    volatile const uint8_t PadByte;    /* Reserved                                   */
+    volatile uint16_t CntReg;          /* TCNT1  – Timer/Counter1                    */
+    volatile uint16_t InputCaptReg;    /* ICR1   – Input Capture Register 1          */
+    volatile uint16_t OutCompRegA;     /* OCR1A  – Output Compare Register 1 A       */
+    volatile uint16_t OutCompRegB;     /* OCR1B  – Output Compare Register 1 B       */
 } Timer1Type;
 
-typedef struct Timer2Type
+typedef struct Timer2Type               /* Memory mapped I/O structure for TImer 2   */
 {
-    volatile uint8_t CtrlRegA;
-    volatile uint8_t CtrlRegB;
-    volatile uint8_t CntReg;
-    volatile uint8_t OutCompRegA;
-    volatile uint8_t OutCompRegB;
-    volatile const uint8_t PadByte;
-    volatile uint8_t AsyncStatusReg;
+    volatile uint8_t CtrlRegA;          /* TCCR2A – Timer/Counter Control Register A */
+    volatile uint8_t CtrlRegB;          /* TCCR2B – Timer/Counter Control Register B */
+    volatile uint8_t CntReg;            /* TCNT2  – Timer/Counter Register           */
+    volatile uint8_t OutCompRegA;       /* OCR2A  – Output Compare Register A        */
+    volatile uint8_t OutCompRegB;       /* OCR2B  – Output Compare Register B        */
+    volatile const uint8_t PadByte;     /* Reserved                                  */
+    volatile uint8_t AsyncStatusReg;    /* ASSR   – Asynchronous Status Register     */
 } Timer2Type;
 
 typedef struct TimerType
@@ -79,15 +81,15 @@ typedef enum TIMER_MODE
 //==================================================================================================
 // External variable declarations
 //==================================================================================================
-extern TimerType* Timer0;
-extern TimerType* Timer1;
-extern TimerType* Timer2;
+extern TimerType* Timer0Handle;
+extern TimerType* Timer1Handle;
+extern TimerType* Timer2Handle;
 
 
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
-void Timer_Init(TimerType* Timer, enum TIMER_MODE Mode);
+void Timer_Init(TimerType* TimerHandle, enum TIMER_MODE Mode);
 
 
 #endif // _TIMER_H_

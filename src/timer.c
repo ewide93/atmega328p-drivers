@@ -40,42 +40,27 @@ static void Timer_Timer2Init(Timer2Type* Timer, enum TIMER_MODE Mode);
 //==================================================================================================
 // External variable definitions
 //==================================================================================================
-static TimerType Timer0_Local = { .Timer = TIMER0_ADDRESS, .TimerID = TIMER0_ID};
-TimerType* Timer0 = &Timer0_Local;
+static TimerType Timer0_Local = { .Timer = TIMER0_ADDRESS, .TimerID = TIMER0_ID };
+TimerType* Timer0Handle = &Timer0_Local;
 
-static TimerType Timer1_Local = { .Timer = TIMER1_ADDRESS, .TimerID = TIMER1_ID};
-TimerType* Timer1 = &Timer1_Local;
+static TimerType Timer1_Local = { .Timer = TIMER1_ADDRESS, .TimerID = TIMER1_ID };
+TimerType* Timer1Handle = &Timer1_Local;
 
-static TimerType Timer2_Local = { .Timer = TIMER2_ADDRESS, .TimerID = TIMER2_ID};
-TimerType* Timer2 = &Timer2_Local;
+static TimerType Timer2_Local = { .Timer = TIMER2_ADDRESS, .TimerID = TIMER2_ID };
+TimerType* Timer2Handle = &Timer2_Local;
 
 
 //==================================================================================================
 // External function definitions
 //==================================================================================================
-void Timer_Init(TimerType* Timer, enum TIMER_MODE Mode)
+void Timer_Init(TimerType* TimerHandle, enum TIMER_MODE Mode)
 {
-    switch (Timer->TimerID)
+    switch (TimerHandle->TimerID)
     {
-        case TIMER0_ID:
-        {
-            Timer_Timer0Init((Timer0Type*)Timer->Timer, Mode);
-            break;
-        }
-        case TIMER1_ID:
-        {
-            Timer_Timer1Init((Timer1Type*)Timer->Timer, Mode);
-            break;
-        }
-        case TIMER2_ID:
-        {
-            Timer_Timer2Init((Timer2Type*)Timer->Timer, Mode);
-            break;
-        }
-        default:
-        {
-            break;
-        }
+        case TIMER0_ID: { Timer_Timer0Init((Timer0Type*)TimerHandle->Timer, Mode); break; }
+        case TIMER1_ID: { Timer_Timer1Init((Timer1Type*)TimerHandle->Timer, Mode); break; }
+        case TIMER2_ID: { Timer_Timer2Init((Timer2Type*)TimerHandle->Timer, Mode); break; }
+        default: { break; }
     }
 }
 

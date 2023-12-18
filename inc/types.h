@@ -2,7 +2,7 @@
 //
 // File: types.h
 //
-// Purpose: Header file for easy inclusion of standard types.
+// Purpose: Header file collecting common type definitions.
 //
 //==================================================================================================
 #ifndef _TYPES_H_
