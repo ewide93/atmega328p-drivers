@@ -17,9 +17,9 @@
 //==================================================================================================
 // Local macro definitions.
 //==================================================================================================
-#define IO_PORT_B_ADDRESS (IOPortType*)(0x23)
-#define IO_PORT_C_ADDRESS (IOPortType*)(0x26)
-#define IO_PORT_D_ADDRESS (IOPortType*)(0x29)
+#define IO_PORT_B_ADDRESS ((IOPortType*)0x23U)
+#define IO_PORT_C_ADDRESS ((IOPortType*)0x26U)
+#define IO_PORT_D_ADDRESS ((IOPortType*)0x29U)
 #define PIN_NUM_MAX       (7U)
 
 

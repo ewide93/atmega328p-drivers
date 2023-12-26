@@ -23,20 +23,28 @@
 #define Timer1 ((Timer1Type*)Timer1Handle->Timer)    /* NOTE: May not be necessary... */
 #define Timer2 ((Timer2Type*)Timer2Handle->Timer)    /* NOTE: May not be necessary... */
 
-                                          /* Timer 0 Clock Prescalers                             */
-#define TIMER0_PRESCALER_1    (0x01)      /* Timer frequency: 16 MHz      -> Period time: 62.5 ns */
-#define TIMER0_PRESCALER_8    (0x02)      /* Timer frequency: 2 MHz       -> Period time: 0.5 us  */
-#define TIMER0_PRESCALER_64   (0x03)      /* Timer frequency: 250 kHz     -> Period time: 4 us    */
-#define TIMER0_PRESCALER_256  (0x04)      /* Timer frequency: 62.5 kHz    -> Period time: 16 us   */
-#define TIMER0_PRESCALER_1024 (0x05)      /* Timer frequency: 15.625 kHz  -> Period time: 64 us   */
+                                           /* Timer 0 Clock Prescalers                             */
+#define TIMER0_PRESCALER_1      (0x01U)    /* Timer frequency: 16 MHz      -> Period time: 62.5 ns */
+#define TIMER0_PRESCALER_8      (0x02U)    /* Timer frequency: 2 MHz       -> Period time: 0.5 us  */
+#define TIMER0_PRESCALER_64     (0x03U)    /* Timer frequency: 250 kHz     -> Period time: 4 us    */
+#define TIMER0_PRESCALER_256    (0x04U)    /* Timer frequency: 62.5 kHz    -> Period time: 16 us   */
+#define TIMER0_PRESCALER_1024   (0x05U)    /* Timer frequency: 15.625 kHz  -> Period time: 64 us   */
 
-                                          /* Timer 0 Waveform Generation Modes   */
-#define TIMER0_WGM_NORMAL       (0x00)    /* Normal Mode                         */
-#define TIMER0_WGM_PCPWM_CNTMAX (0x01)    /* Phase Correct PWM Mode, TOP = 0xFF  */
-#define TIMER0_WGM_CTC          (0x02)    /* Clear Timer on Compare Match Mode   */
-#define TIMER0_FPWM_CNTMAX      (0x03)    /* Fast PWM Mode, TOP = 0xFF           */
-#define TIMER0_PCPWM            (0x05)    /* Phase Correct PWM Mode, TOP = OCR0A */
-#define TIMER0_FPWM             (0x07)    /* Fast PWM Mode, TOP = OCR0A          */
+                                           /* Timer 0 Waveform Generation Modes                    */
+#define TIMER0_WGM_NORMAL       (0x00U)    /* Normal Mode                                          */
+#define TIMER0_WGM_PCPWM_CNTMAX (0x01U)    /* Phase Correct PWM Mode, TOP = 0xFF                   */
+#define TIMER0_WGM_CTC          (0x02U)    /* Clear Timer on Compare Match Mode                    */
+#define TIMER0_FPWM_CNTMAX      (0x03U)    /* Fast PWM Mode, TOP = 0xFF                            */
+#define TIMER0_PCPWM            (0x05U)    /* Phase Correct PWM Mode, TOP = OCR0A                  */
+#define TIMER0_FPWM             (0x07U)    /* Fast PWM Mode, TOP = OCR0A                           */
+
+                                           /* Timer 0 Compare Match Output Mode                    */
+#define TIMER0_COMA_TOGGLE      (0x01U)    /* Toggle OC0A (Pin 6) on compare match                 */
+#define TIMER0_COMA_CLEAR       (0x02U)    /* Clear  OC0A (Pin 6) on compare match                 */
+#define TIMER0_COMA_SET         (0x03U)    /* Set OC0A (Pin 6) on compare match                    */
+#define TIMER0_COMB_TOGGLE      (0x01U)    /* Toggle OC0B (Pin 5) on compare match                 */
+#define TIMER0_COMB_CLEAR       (0x02U)    /* Clear  OC0B (Pin 5) on compare match                 */
+#define TIMER0_COMB_SET         (0x03U)    /* Set OC0B (Pin 5) on compare match                    */
 
 
 //==================================================================================================

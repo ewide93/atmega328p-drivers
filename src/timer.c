@@ -16,12 +16,15 @@
 //==================================================================================================
 // Local preprocessor definitions
 //==================================================================================================
-#define TIMER0_ADDRESS (Timer0Type*)(0x44)
-#define TIMER0_ID      (0)
-#define TIMER1_ADDRESS (Timer1Type*)(0x80)
-#define TIMER1_ID      (1)
-#define TIMER2_ADDRESS (Timer2Type*)(0xB0)
-#define TIMER2_ID      (2)
+#define TIMER0_ADDRESS         ((Timer0Type*)0x44U)
+#define TIMER0_ID              (0)
+#define TIMER0_INT_MASK_REG    ((volatile uint8_t*)0x6EU)
+#define TIMER1_ADDRESS         ((Timer1Type*)0x80U)
+#define TIMER1_ID              (1)
+#define TIMER1_INT_MASK_REG    ((volatile uint8_t*)0x6FU)
+#define TIMER2_ADDRESS         ((Timer2Type*)0xB0U)
+#define TIMER2_ID              (2)
+#define TIMER2_INT_MASK_REG    ((volatile uint8_t*)0x70U)
 
 
 //==================================================================================================
@@ -43,21 +46,21 @@ static void Timer_Timer2Init(Timer2Type* Timer, enum TIMER_MODE Mode);
 static TimerType Timer0_Local = {
     .Timer = TIMER0_ADDRESS,
     .TimerID = TIMER0_ID,
-    .IntMaskReg = (volatile uint8_t*)(0x6E),
+    .IntMaskReg = TIMER0_INT_MASK_REG,
 };
 TimerType* Timer0Handle = &Timer0_Local;
 
 static TimerType Timer1_Local = {
     .Timer = TIMER1_ADDRESS,
     .TimerID = TIMER1_ID,
-    .IntMaskReg = (volatile uint8_t*)(0x6F),
+    .IntMaskReg = TIMER1_INT_MASK_REG,
 };
 TimerType* Timer1Handle = &Timer1_Local;
 
 static TimerType Timer2_Local = {
     .Timer = TIMER2_ADDRESS,
     .TimerID = TIMER2_ID,
-    .IntMaskReg = (volatile uint8_t*)(0x70),
+    .IntMaskReg = TIMER2_INT_MASK_REG,
     };
 TimerType* Timer2Handle = &Timer2_Local;
 

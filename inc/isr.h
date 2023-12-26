@@ -20,10 +20,10 @@
 //==================================================================================================
 // Preprocessor definitions.
 //==================================================================================================
-#define TIM_INT_OVF   0
-#define TIM_INT_COMPA 1
-#define TIM_INT_COMPB 2
-#define TIM_INT_CAPT  5
+#define TIM_INT_OVF   (0U)
+#define TIM_INT_COMPA (1U)
+#define TIM_INT_COMPB (2U)
+#define TIM_INT_CAPT  (5U)
 
 //==================================================================================================
 // Definitions of enumerations and structures.
