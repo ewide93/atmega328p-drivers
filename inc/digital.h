@@ -63,6 +63,7 @@ extern PinType* Pin13;
 //==================================================================================================
 void Digital_PinInit(PinType* Pin, enum IO_MODE Mode);
 void Digital_SetPin(PinType* Pin);
+void Digital_ClearPin(PinType* Pin);
 void Digital_TogglePin(PinType* Pin);
 bool Digital_ReadPin(PinType* Pin);
 

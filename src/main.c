@@ -35,9 +35,9 @@ int main(void)
 {
     Setup();
 
-    while (true)
+    while (!FALSE)
     {
-        Timer0->CntReg = 0xFF;
+
     }
     return 0;
 }
@@ -49,13 +49,15 @@ int main(void)
 
 static void ExternalInterrupt0Handler(void)
 {
-    TIMSK0 ^= (1 << OCIE0A);
+    Digital_ClearPin(Pin4);
+    ISR_TimerInterruptDisable(Timer0Handle, TIM_INT_COMPA);
 }
 
 
 static void ExternalInterrupt1Handler(void)
 {
-    TIMSK0 ^= (1 << OCIE0B);
+    Digital_ClearPin(Pin5);
+    ISR_TimerInterruptDisable(Timer0Handle, TIM_INT_COMPB);
 }
 
 static void Timer0_CompareAHandler(void)
@@ -95,7 +97,9 @@ static inline void Setup(void)
     ISR_ExternalInterruptEnable(EXT_INT_1);
 
     Timer_Init(Timer0Handle, TIMER_MODE_NORMAL);
-    TIMSK0 |= ((1 << OCIE0A) | (1 << OCIE0B));
+    ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPA);
+    ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPB);
+
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
     ISR_AddInterruptHandler(Timer0_CompareBHandler, INTERRUPT_VECTOR_TIM0_COMPB);
 

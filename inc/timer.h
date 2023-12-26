@@ -19,20 +19,36 @@
 //==================================================================================================
 // Preprocessor definitions
 //==================================================================================================
-#define Timer0 ((Timer0Type*)Timer0Handle->Timer)
-#define Timer1 ((Timer1Type*)Timer1Handle->Timer)
-#define Timer2 ((Timer2Type*)Timer2Handle->Timer)
+#define Timer0 ((Timer0Type*)Timer0Handle->Timer)    /* NOTE: May not be necessary... */
+#define Timer1 ((Timer1Type*)Timer1Handle->Timer)    /* NOTE: May not be necessary... */
+#define Timer2 ((Timer2Type*)Timer2Handle->Timer)    /* NOTE: May not be necessary... */
+
+                                          /* Timer 0 Clock Prescalers                             */
+#define TIMER0_PRESCALER_1    (0x01)      /* Timer frequency: 16 MHz      -> Period time: 62.5 ns */
+#define TIMER0_PRESCALER_8    (0x02)      /* Timer frequency: 2 MHz       -> Period time: 0.5 us  */
+#define TIMER0_PRESCALER_64   (0x03)      /* Timer frequency: 250 kHz     -> Period time: 4 us    */
+#define TIMER0_PRESCALER_256  (0x04)      /* Timer frequency: 62.5 kHz    -> Period time: 16 us   */
+#define TIMER0_PRESCALER_1024 (0x05)      /* Timer frequency: 15.625 kHz  -> Period time: 64 us   */
+
+                                          /* Timer 0 Waveform Generation Modes   */
+#define TIMER0_WGM_NORMAL       (0x00)    /* Normal Mode                         */
+#define TIMER0_WGM_PCPWM_CNTMAX (0x01)    /* Phase Correct PWM Mode, TOP = 0xFF  */
+#define TIMER0_WGM_CTC          (0x02)    /* Clear Timer on Compare Match Mode   */
+#define TIMER0_FPWM_CNTMAX      (0x03)    /* Fast PWM Mode, TOP = 0xFF           */
+#define TIMER0_PCPWM            (0x05)    /* Phase Correct PWM Mode, TOP = OCR0A */
+#define TIMER0_FPWM             (0x07)    /* Fast PWM Mode, TOP = OCR0A          */
+
 
 //==================================================================================================
 // Structure definitions
 //==================================================================================================
-typedef struct Timer0Type            /* Memory mapped I/O structure for Timer 0   */
+typedef struct Timer0Type              /* Memory mapped I/O structure for Timer 0   */
 {
-    volatile uint8_t CtrlRegA;       /* TCCR0A – Timer/Counter Control Register A */
-    volatile uint8_t CtrlRegB;       /* TCCR0B – Timer/Counter Control Register B */
-    volatile uint8_t CntReg;         /* TCNT0  – Timer/Counter Register           */
-    volatile uint8_t OutCompRegA;    /* OCR0A  – Output Compare Register A        */
-    volatile uint8_t OutCompRegB;    /* OCR0B  – Output Compare Register B        */
+    volatile uint8_t CtrlRegA;         /* TCCR0A – Timer/Counter Control Register A */
+    volatile uint8_t CtrlRegB;         /* TCCR0B – Timer/Counter Control Register B */
+    volatile uint8_t CntReg;           /* TCNT0  – Timer/Counter Register           */
+    volatile uint8_t OutCompRegA;      /* OCR0A  – Output Compare Register A        */
+    volatile uint8_t OutCompRegB;      /* OCR0B  – Output Compare Register B        */
 } Timer0Type;
 
 typedef struct Timer1Type              /* Memory mapped I/O structure for Timer 1    */
@@ -58,10 +74,11 @@ typedef struct Timer2Type               /* Memory mapped I/O structure for TImer
     volatile uint8_t AsyncStatusReg;    /* ASSR   – Asynchronous Status Register     */
 } Timer2Type;
 
-typedef struct TimerType
+typedef struct TimerType                /* Generic timer structure                   */
 {
-    void* Timer;
-    uint8_t TimerID;
+    void* const Timer;                  /* Pointer to timer MMIO structure           */
+    const uint8_t TimerID;              /* .TimerID = X -> .Timer = TimerXType*      */
+    volatile uint8_t* IntMaskReg;       /* Interrupt mask register                   */
 } TimerType;
 
 

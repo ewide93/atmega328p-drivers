@@ -40,13 +40,25 @@ static void Timer_Timer2Init(Timer2Type* Timer, enum TIMER_MODE Mode);
 //==================================================================================================
 // External variable definitions
 //==================================================================================================
-static TimerType Timer0_Local = { .Timer = TIMER0_ADDRESS, .TimerID = TIMER0_ID };
+static TimerType Timer0_Local = {
+    .Timer = TIMER0_ADDRESS,
+    .TimerID = TIMER0_ID,
+    .IntMaskReg = (volatile uint8_t*)(0x6E),
+};
 TimerType* Timer0Handle = &Timer0_Local;
 
-static TimerType Timer1_Local = { .Timer = TIMER1_ADDRESS, .TimerID = TIMER1_ID };
+static TimerType Timer1_Local = {
+    .Timer = TIMER1_ADDRESS,
+    .TimerID = TIMER1_ID,
+    .IntMaskReg = (volatile uint8_t*)(0x6F),
+};
 TimerType* Timer1Handle = &Timer1_Local;
 
-static TimerType Timer2_Local = { .Timer = TIMER2_ADDRESS, .TimerID = TIMER2_ID };
+static TimerType Timer2_Local = {
+    .Timer = TIMER2_ADDRESS,
+    .TimerID = TIMER2_ID,
+    .IntMaskReg = (volatile uint8_t*)(0x70),
+    };
 TimerType* Timer2Handle = &Timer2_Local;
 
 

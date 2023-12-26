@@ -14,19 +14,21 @@
 //==================================================================================================
 #include "types.h"
 #include "hw_cfg.h"
+#include "timer.h"
 
 
 //==================================================================================================
 // Preprocessor definitions.
 //==================================================================================================
-
+#define TIM_INT_OVF   0
+#define TIM_INT_COMPA 1
+#define TIM_INT_COMPB 2
+#define TIM_INT_CAPT  5
 
 //==================================================================================================
 // Definitions of enumerations and structures.
 //==================================================================================================
-
-// Interrupt Vector
-typedef enum INTERRUPT_VECTOR
+typedef enum INTERRUPT_VECTOR                /* Interrupt Vector */
 {
     INTERRUPT_VECTOR_EXT_INT0,
     INTERRUPT_VECTOR_EXT_INT1,
@@ -55,15 +57,13 @@ typedef enum INTERRUPT_VECTOR
     INTERRUPT_VECTOR_SPM_RDY,
 } INTERRUPT_VECTOR;
 
-// External Interrupt
-typedef enum EXT_INT
+typedef enum EXT_INT                         /* External Interrupt */
 {
     EXT_INT_0,
     EXT_INT_1
 } EXT_INT;
 
-// External Interrupt Sense Control
-typedef enum EXT_INT_SC
+typedef enum EXT_INT_SC                      /* External Interrupt Sense Control */
 {
     EXT_INT_SC_LOW,
     EXT_INT_SC_ANY,
@@ -110,5 +110,18 @@ void ISR_ExternalInterruptDisable(EXT_INT Interrupt);
 // Brief    : Make specified function the interrupt handler of the given interrupt.
 //--------------------------------------------------------------------------------------------------
 void ISR_AddInterruptHandler(VoidFunctionPtr Function, INTERRUPT_VECTOR InterruptVector);
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_TimerInterruptEnable
+// Brief    : Enable the specified interrupt for the given timer.
+//--------------------------------------------------------------------------------------------------
+void ISR_TimerInterruptEnable(TimerType* TimerHandle, const uint8_t Interrupt);
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_TimerInterruptEnable
+// Brief    : Disable the specified interrupt for the given timer.
+//--------------------------------------------------------------------------------------------------
+void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt);
+
 
 #endif // _ISR_H_

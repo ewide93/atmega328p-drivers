@@ -86,7 +86,7 @@ void Digital_SetPin(PinType* Pin)
     return;
 }
 
-void Digital_ClrPin(PinType* Pin)
+void Digital_ClearPin(PinType* Pin)
 {
     Pin->IOPort->DataReg &= ~(1 << Pin->PinNum);
     return;

@@ -148,6 +148,19 @@ void ISR_AddInterruptHandler(VoidFunctionPtr Function, INTERRUPT_VECTOR Interrup
     InterruptHandlers[InterruptVector] = Function;
 }
 
+
+void ISR_TimerInterruptEnable(TimerType* TimerHandle, const uint8_t Interrupt)
+{
+    *(TimerHandle->IntMaskReg) |= (1 << Interrupt);
+}
+
+
+void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt)
+{
+    *(TimerHandle->IntMaskReg) &= ~(1 << Interrupt);
+}
+
+
 //==================================================================================================
 // Interrupt service routines.
 //==================================================================================================
