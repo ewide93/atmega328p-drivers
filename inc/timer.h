@@ -103,19 +103,6 @@ typedef struct TimerType                /* Generic timer structure              
 
 
 //==================================================================================================
-// Enumerations
-//==================================================================================================
-typedef enum TIMER_MODE
-{
-    TIMER_MODE_NORMAL,
-    TIMER_MODE_CTC,
-    TIMER_MODE_FAST_PWM,
-    TIMER_MODE_PHASE_CORRECT_PWM,
-    TIMER_MODE_PHASE_FREQ_CORRECT_PWM,
-} TIMER_MODE;
-
-
-//==================================================================================================
 // External variable declarations
 //==================================================================================================
 extern TimerType* Timer0Handle;

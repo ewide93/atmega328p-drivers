@@ -27,14 +27,14 @@ typedef enum IO_MODE
     IO_MODE_OUTPUT
 } IO_MODE;
 
-typedef struct
+typedef struct IOPortType
 {
     volatile uint8_t InputPinReg;
     volatile uint8_t DataDirReg;
     volatile uint8_t DataReg;
 } IOPortType;
 
-typedef struct
+typedef struct PinType
 {
     IOPortType* IOPort;
     uint8_t PinNum;
