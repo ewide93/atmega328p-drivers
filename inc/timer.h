@@ -19,9 +19,13 @@
 //==================================================================================================
 // Preprocessor definitions
 //==================================================================================================
-#define Timer0 ((Timer0Type*)Timer0Handle->Timer)    /* NOTE: May not be necessary... */
-#define Timer1 ((Timer1Type*)Timer1Handle->Timer)    /* NOTE: May not be necessary... */
-#define Timer2 ((Timer2Type*)Timer2Handle->Timer)    /* NOTE: May not be necessary... */
+#define Timer0              ((Timer0Type*)Timer0Handle->Timer)    /* NOTE: May not be necessary... */
+#define Timer1              ((Timer1Type*)Timer1Handle->Timer)    /* NOTE: May not be necessary... */
+#define Timer2              ((Timer2Type*)Timer2Handle->Timer)    /* NOTE: May not be necessary... */
+
+#define TIMER0_ID           (0x00U)
+#define TIMER1_ID           (0x01U)
+#define TIMER2_ID           (0x02U)
 
                                            /* Timer 0 Clock Prescalers                             */
 #define TIMER0_PRESCALER_1      (0x01U)    /* Timer frequency: 16 MHz      -> Period time: 62.5 ns */
@@ -83,6 +87,11 @@ typedef struct Timer1Type              /* Memory mapped I/O structure for Timer 
     volatile uint16_t OutCompRegB;     /* OCR1B  – Output Compare Register 1 B       */
 } Timer1Type;
 
+typedef struct Timer1CfgType
+{
+    uint8_t Placeholder;
+} Timer1CfgType;
+
 typedef struct Timer2Type               /* Memory mapped I/O structure for Timer 2   */
 {
     volatile uint8_t CtrlRegA;          /* TCCR2A – Timer/Counter Control Register A */
@@ -94,10 +103,14 @@ typedef struct Timer2Type               /* Memory mapped I/O structure for Timer
     volatile uint8_t AsyncStatusReg;    /* ASSR   – Asynchronous Status Register     */
 } Timer2Type;
 
+typedef struct Timer2CfgType
+{
+    uint8_t Placeholder;
+} Timer2CfgType;
+
 typedef struct TimerType                /* Generic timer structure                   */
 {
     void* const Timer;                  /* Pointer to timer MMIO structure           */
-    const uint8_t TimerID;              /* .TimerID = X -> .Timer = TimerXType*      */
     volatile uint8_t* IntMaskReg;       /* Interrupt mask register                   */
 } TimerType;
 
@@ -113,7 +126,7 @@ extern TimerType* Timer2Handle;
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
-void Timer_Init(TimerType* TimerHandle, void* TimerCfg);
+void Timer_Init(void* TimerHandle, void* TimerCfg, const uint8_t TimerID);
 
 
 #endif // _TIMER_H_

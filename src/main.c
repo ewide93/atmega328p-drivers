@@ -103,7 +103,7 @@ static inline void Setup(void)
     ISR_AddInterruptHandler(ExternalInterrupt1Handler, INTERRUPT_VECTOR_EXT_INT1);
     ISR_ExternalInterruptEnable(EXT_INT_1);
 
-    Timer_Init(Timer0Handle, &Timer0Cfg);
+    Timer_Init(Timer0Handle, &Timer0Cfg, TIMER0_ID);
     ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPA);
     ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPB);
 
