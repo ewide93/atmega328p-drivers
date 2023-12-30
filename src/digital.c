@@ -83,19 +83,16 @@ void Digital_PinInit(PinType* Pin, enum IO_MODE Mode)
 void Digital_SetPin(PinType* Pin)
 {
     Pin->IOPort->DataReg |= (1 << Pin->PinNum);
-    return;
 }
 
 void Digital_ClearPin(PinType* Pin)
 {
     Pin->IOPort->DataReg &= ~(1 << Pin->PinNum);
-    return;
 }
 
 void Digital_TogglePin(PinType* Pin)
 {
     Pin->IOPort->DataReg ^= (1 << Pin->PinNum);
-    return;
 }
 
 bool Digital_ReadPin(PinType* Pin)

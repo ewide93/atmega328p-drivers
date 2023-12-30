@@ -160,6 +160,10 @@ void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt)
     *(TimerHandle->IntMaskReg) &= ~(1 << Interrupt);
 }
 
+void ISR_TimerInterruptToggle(TimerType* TimerHandle, const uint8_t Interrupt)
+{
+    *(TimerHandle->IntMaskReg) ^= (1 << Interrupt);
+}
 
 //==================================================================================================
 // Interrupt service routines.

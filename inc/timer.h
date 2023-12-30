@@ -34,14 +34,16 @@
 #define TIMER0_WGM_NORMAL       (0x00U)    /* Normal Mode                                          */
 #define TIMER0_WGM_PCPWM_CNTMAX (0x01U)    /* Phase Correct PWM Mode, TOP = 0xFF                   */
 #define TIMER0_WGM_CTC          (0x02U)    /* Clear Timer on Compare Match Mode                    */
-#define TIMER0_FPWM_CNTMAX      (0x03U)    /* Fast PWM Mode, TOP = 0xFF                            */
-#define TIMER0_PCPWM            (0x05U)    /* Phase Correct PWM Mode, TOP = OCR0A                  */
-#define TIMER0_FPWM             (0x07U)    /* Fast PWM Mode, TOP = OCR0A                           */
+#define TIMER0_WGM_FPWM_CNTMAX  (0x03U)    /* Fast PWM Mode, TOP = 0xFF                            */
+#define TIMER0_WGM_PCPWM        (0x05U)    /* Phase Correct PWM Mode, TOP = OCR0A                  */
+#define TIMER0_WGM_FPWM         (0x07U)    /* Fast PWM Mode, TOP = OCR0A                           */
 
                                            /* Timer 0 Compare Match Output Mode                    */
+#define TIMER0_COMA_NONE        (0x00U)    /* OC0A (Pin 6) disconnected                            */
 #define TIMER0_COMA_TOGGLE      (0x01U)    /* Toggle OC0A (Pin 6) on compare match                 */
 #define TIMER0_COMA_CLEAR       (0x02U)    /* Clear  OC0A (Pin 6) on compare match                 */
 #define TIMER0_COMA_SET         (0x03U)    /* Set OC0A (Pin 6) on compare match                    */
+#define TIMER0_COMB_NONE        (0x00U)    /* OC0B (Pin 5) disconnected                            */
 #define TIMER0_COMB_TOGGLE      (0x01U)    /* Toggle OC0B (Pin 5) on compare match                 */
 #define TIMER0_COMB_CLEAR       (0x02U)    /* Clear  OC0B (Pin 5) on compare match                 */
 #define TIMER0_COMB_SET         (0x03U)    /* Set OC0B (Pin 5) on compare match                    */
@@ -59,6 +61,16 @@ typedef struct Timer0Type              /* Memory mapped I/O structure for Timer 
     volatile uint8_t OutCompRegB;      /* OCR0B  – Output Compare Register B        */
 } Timer0Type;
 
+typedef struct Timer0CfgType           /* Configuration structure for Timer 0       */
+{
+    uint8_t Prescaler;                 /* TIMER0_PRESCALER_x                        */
+    uint8_t WaveGenMode;               /* TIMER0_WGM_x                              */
+    uint8_t OutModeA;                  /* TIMER0_COMA_x                             */
+    uint8_t OutCompValA;
+    uint8_t OutModeB;                  /* TIMER0_COMB_x                             */
+    uint8_t OutCompValB;
+} Timer0CfgType;
+
 typedef struct Timer1Type              /* Memory mapped I/O structure for Timer 1    */
 {
     volatile uint8_t CtrlRegA;         /* TCCR1A – Timer/Counter1 Control Register A */
@@ -71,7 +83,7 @@ typedef struct Timer1Type              /* Memory mapped I/O structure for Timer 
     volatile uint16_t OutCompRegB;     /* OCR1B  – Output Compare Register 1 B       */
 } Timer1Type;
 
-typedef struct Timer2Type               /* Memory mapped I/O structure for TImer 2   */
+typedef struct Timer2Type               /* Memory mapped I/O structure for Timer 2   */
 {
     volatile uint8_t CtrlRegA;          /* TCCR2A – Timer/Counter Control Register A */
     volatile uint8_t CtrlRegB;          /* TCCR2B – Timer/Counter Control Register B */
@@ -114,7 +126,7 @@ extern TimerType* Timer2Handle;
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
-void Timer_Init(TimerType* TimerHandle, enum TIMER_MODE Mode);
+void Timer_Init(TimerType* TimerHandle, void* TimerCfg);
 
 
 #endif // _TIMER_H_

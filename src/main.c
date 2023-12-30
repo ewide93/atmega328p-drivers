@@ -29,6 +29,13 @@ static void Timer0_CompareBHandler(void);
 
 
 //==================================================================================================
+// Variables
+//==================================================================================================
+Timer0CfgType Timer0Cfg = { .OutCompValA = 250, .OutCompValB = 250,
+                            .Prescaler = TIMER0_PRESCALER_64, .OutModeA = TIMER0_COMA_NONE,
+                            .OutModeB = TIMER0_COMB_NONE, .WaveGenMode = TIMER0_WGM_CTC };
+
+//==================================================================================================
 // Main program entry-point.
 //==================================================================================================
 int main(void)
@@ -50,20 +57,20 @@ int main(void)
 static void ExternalInterrupt0Handler(void)
 {
     Digital_ClearPin(Pin4);
-    ISR_TimerInterruptDisable(Timer0Handle, TIM_INT_COMPA);
+    ISR_TimerInterruptToggle(Timer0Handle, TIM_INT_COMPA);
 }
 
 
 static void ExternalInterrupt1Handler(void)
 {
     Digital_ClearPin(Pin5);
-    ISR_TimerInterruptDisable(Timer0Handle, TIM_INT_COMPB);
+    ISR_TimerInterruptToggle(Timer0Handle, TIM_INT_COMPB);
 }
 
 static void Timer0_CompareAHandler(void)
 {
-    static uint16_t cnt = 0;
-    if (cnt++ > 50)
+    static uint8_t cnt = 0;
+    if (cnt++ > 250)
     {
         Digital_TogglePin(Pin4);
         cnt = 0;
@@ -72,8 +79,8 @@ static void Timer0_CompareAHandler(void)
 
 static void Timer0_CompareBHandler(void)
 {
-    static uint16_t cnt = 0;
-    if (cnt++ > 50)
+    static uint8_t cnt = 0;
+    if (cnt++ > 250)
     {
         Digital_TogglePin(Pin5);
         cnt = 0;
@@ -96,7 +103,7 @@ static inline void Setup(void)
     ISR_AddInterruptHandler(ExternalInterrupt1Handler, INTERRUPT_VECTOR_EXT_INT1);
     ISR_ExternalInterruptEnable(EXT_INT_1);
 
-    Timer_Init(Timer0Handle, TIMER_MODE_NORMAL);
+    Timer_Init(Timer0Handle, &Timer0Cfg);
     ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPA);
     ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPB);
 

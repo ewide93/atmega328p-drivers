@@ -20,10 +20,10 @@
 //==================================================================================================
 // Preprocessor definitions.
 //==================================================================================================
-#define TIM_INT_OVF   (0U)
-#define TIM_INT_COMPA (1U)
-#define TIM_INT_COMPB (2U)
-#define TIM_INT_CAPT  (5U)
+#define TIM_INT_OVF   (0x00U)
+#define TIM_INT_COMPA (0x01U)
+#define TIM_INT_COMPB (0x02U)
+#define TIM_INT_CAPT  (0x20U)
 
 //==================================================================================================
 // Definitions of enumerations and structures.
@@ -123,5 +123,10 @@ void ISR_TimerInterruptEnable(TimerType* TimerHandle, const uint8_t Interrupt);
 //--------------------------------------------------------------------------------------------------
 void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt);
 
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_TimerInterruptToggle
+// Brief    : Toggle the specified interrupt for the given timer.
+//--------------------------------------------------------------------------------------------------
+void ISR_TimerInterruptToggle(TimerType* TimerHandle, const uint8_t Interrupt);
 
 #endif // _ISR_H_
