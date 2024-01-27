@@ -17,6 +17,7 @@
 #include "isr.h"
 #include "timer.h"
 #include "adc.h"
+#include "uart.h"
 
 
 //==================================================================================================
@@ -26,7 +27,6 @@ static inline void Setup(void);
 static void ExternalInterrupt0Handler(void);
 static void ExternalInterrupt1Handler(void);
 static void Timer0_CompareAHandler(void);
-static void Timer0_CompareBHandler(void);
 
 
 //==================================================================================================
@@ -80,24 +80,16 @@ static void ExternalInterrupt1Handler(void)
 
 static void Timer0_CompareAHandler(void)
 {
-    static uint8_t cnt = 0;
-    if (cnt++ > 250)
+    static uint8_t Counter = 0;
+    if (Counter++ > 250)
     {
-        Digital_TogglePin(Pin4);
-        cnt = 0;
+        static U8 Message = 0x41;
+        UART_WriteByteBlocking(Message);
+        Message++;
+        if (Message > 0x5A) Message = 0x41;
+        Counter = 0;
     }
 }
-
-static void Timer0_CompareBHandler(void)
-{
-    static uint8_t cnt = 0;
-    if (cnt++ > 250)
-    {
-        Digital_TogglePin(Pin5);
-        cnt = 0;
-    }
-}
-
 
 static inline void Setup(void)
 {
@@ -116,13 +108,11 @@ static inline void Setup(void)
 
     Timer_Init(Timer0Handle, &Timer0Cfg, TIMER0_ID);
     ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPA);
-    ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPB);
-
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
-    ISR_AddInterruptHandler(Timer0_CompareBHandler, INTERRUPT_VECTOR_TIM0_COMPB);
 
-    ADC_Init(&ADC_Config);
-    ADC_AutoTriggerEnable();
+    // ADC_Init(&ADC_Config);
+    // ADC_AutoTriggerEnable();
+    UART_Init();
 
     ISR_GlobalInterruptEnable();
 }
