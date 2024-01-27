@@ -43,6 +43,10 @@ BAUD_RATE := 115200
 MCU := atmega328p
 F_CPU := 16000000UL
 
+LINTER := cppcheck
+LINTFLAGS = --enable=all --suppress=missingIncludeSystem -I$(INC_DIR)
+LINTFLAGS += --std=c99 --platform=avr8
+
 CFLAGS = -Wall -Werror -Wextra -Wunused-variable -std=gnu99 -I$(INC_DIR)
 CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 CFLAGS += -ffunction-sections -fdata-sections -fshort-enums -g3
@@ -100,6 +104,13 @@ clean:
 .PHONY: py
 py:
 	@python $(SCRIPT_DIR)/main.py
+
+#================================================================================
+# Rule for running linter.
+#================================================================================
+.PHONY: lint
+lint:
+	@$(LINTER) $(LINTFLAGS) .
 
 #================================================================================
 # Include the dependencies.
