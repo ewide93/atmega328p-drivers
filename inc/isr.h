@@ -129,4 +129,9 @@ void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt);
 //--------------------------------------------------------------------------------------------------
 void ISR_TimerInterruptToggle(TimerType* TimerHandle, const uint8_t Interrupt);
 
+// TODO: Interrupt functionality for ADC
+void ISR_ADC_InterruptEnable(void);
+void ISR_ADC_InterruptDisable(void);
+void ISR_ADC_InterruptToggle(void);
+
 #endif // _ISR_H_

@@ -16,6 +16,7 @@
 #include "digital.h"
 #include "isr.h"
 #include "timer.h"
+#include "adc.h"
 
 
 //==================================================================================================
@@ -39,6 +40,12 @@ Timer0CfgType Timer0Cfg = {
     .OutModeB = TIMER0_COMB_NONE,
     .WaveGenMode = TIMER0_WGM_CTC };
 
+ADC_CfgType ADC_Config = {
+    .Prescaler = ADC_PRESCALER_128,
+    .Reference = ADC_REF_VCC,
+    .TriggerSource = ADC_AUTO_TRIGGER_SOURCE_TIM0_COMPA
+};
+
 //==================================================================================================
 // Main program entry-point.
 //==================================================================================================
@@ -46,7 +53,7 @@ int main(void)
 {
     Setup();
 
-    while (!FALSE)
+    while (1)
     {
 
     }
@@ -113,6 +120,9 @@ static inline void Setup(void)
 
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
     ISR_AddInterruptHandler(Timer0_CompareBHandler, INTERRUPT_VECTOR_TIM0_COMPB);
+
+    ADC_Init(&ADC_Config);
+    ADC_AutoTriggerEnable();
 
     ISR_GlobalInterruptEnable();
 }

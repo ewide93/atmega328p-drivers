@@ -165,6 +165,21 @@ void ISR_TimerInterruptToggle(TimerType* TimerHandle, const uint8_t Interrupt)
     *(TimerHandle->IntMaskReg) ^= (1 << Interrupt);
 }
 
+void ISR_ADC_InterruptEnable(void)
+{
+    ADCSRA |= (1 << ADIE);
+}
+
+void ISR_ADC_InterruptDisable(void)
+{
+    ADCSRA &= ~(1 << ADIE);
+}
+
+void ISR_ADC_InterruptToggle(void)
+{
+    ADCSRA ^= (1 << ADIE);
+}
+
 //==================================================================================================
 // Interrupt service routines.
 //==================================================================================================
