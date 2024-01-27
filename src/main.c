@@ -31,9 +31,13 @@ static void Timer0_CompareBHandler(void);
 //==================================================================================================
 // Variables
 //==================================================================================================
-Timer0CfgType Timer0Cfg = { .OutCompValA = 250, .OutCompValB = 250,
-                            .Prescaler = TIMER0_PRESCALER_64, .OutModeA = TIMER0_COMA_NONE,
-                            .OutModeB = TIMER0_COMB_NONE, .WaveGenMode = TIMER0_WGM_CTC };
+Timer0CfgType Timer0Cfg = {
+    .OutCompValA = 250,
+    .OutCompValB = 250,
+    .Prescaler = TIMER0_PRESCALER_64,
+    .OutModeA = TIMER0_COMA_NONE,
+    .OutModeB = TIMER0_COMB_NONE,
+    .WaveGenMode = TIMER0_WGM_CTC };
 
 //==================================================================================================
 // Main program entry-point.

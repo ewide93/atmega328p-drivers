@@ -44,8 +44,9 @@ MCU := atmega328p
 F_CPU := 16000000UL
 
 LINTER := cppcheck
-LINTFLAGS = --enable=all --suppress=missingIncludeSystem -I$(INC_DIR)
-LINTFLAGS += --std=c99 --platform=avr8
+LINTER_CACHE_DIR = build/cppcheck_cache
+LINTFLAGS = --enable=all --suppress=missingIncludeSystem -I$(INC_DIR) --quiet
+LINTFLAGS += --std=c99 --platform=avr8 --cppcheck-build-dir=$(LINTER_CACHE_DIR)
 
 CFLAGS = -Wall -Werror -Wextra -Wunused-variable -std=gnu99 -I$(INC_DIR)
 CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
@@ -97,13 +98,6 @@ clean:
 	@rm -rf $(BUILD_DIR)/*.hex
 	@rm -rf $(BUILD_DIR)/*.map
 	@rm -rf $(TARGET)
-
-#================================================================================
-# Rule for running Python script.
-#================================================================================
-.PHONY: py
-py:
-	@python $(SCRIPT_DIR)/main.py
 
 #================================================================================
 # Rule for running linter.

@@ -35,9 +35,9 @@
 //==================================================================================================
 // Local function prototypes
 //==================================================================================================
-static void Timer_Timer0Init(Timer0Type* Timer, Timer0CfgType* TimerCfg);
-static void Timer_Timer1Init(Timer1Type* Timer, Timer1CfgType* TimerCfg);
-static void Timer_Timer2Init(Timer2Type* Timer, Timer2CfgType* TimerCfg);
+static void Timer_Timer0Init(Timer0Type* Timer, const Timer0CfgType* TimerCfg);
+static void Timer_Timer1Init(Timer1Type* Timer, const Timer1CfgType* TimerCfg);
+static void Timer_Timer2Init(Timer2Type* Timer, const Timer2CfgType* TimerCfg);
 
 
 //==================================================================================================
@@ -80,7 +80,7 @@ void Timer_Init(void* TimerHandle, void* TimerCfg, const uint8_t TimerID)
 //==================================================================================================
 // Local function definitions
 //==================================================================================================
-static void Timer_Timer0Init(Timer0Type* Timer, Timer0CfgType* TimerCfg)
+static void Timer_Timer0Init(Timer0Type* Timer, const Timer0CfgType* TimerCfg)
 {
     Timer->CtrlRegA |= ( (TimerCfg->WaveGenMode & 0x03) | (TimerCfg->OutModeA << 6) | (TimerCfg->OutModeB << 4) );
     Timer->CtrlRegB |= ( (TimerCfg->Prescaler) | ((TimerCfg->WaveGenMode & 0x04) << 1) );
@@ -90,12 +90,12 @@ static void Timer_Timer0Init(Timer0Type* Timer, Timer0CfgType* TimerCfg)
     if (TimerCfg->OutModeB > 0) OC0B_OUTPUT_ENABLE;
 }
 
-static void Timer_Timer1Init(Timer1Type* Timer, Timer1CfgType* TimerCfg)
+static void Timer_Timer1Init(Timer1Type* Timer, const Timer1CfgType* TimerCfg)
 {
     Timer->OutCompRegA = TimerCfg->Placeholder;
 }
 
-static void Timer_Timer2Init(Timer2Type* Timer, Timer2CfgType* TimerCfg)
+static void Timer_Timer2Init(Timer2Type* Timer, const Timer2CfgType* TimerCfg)
 {
     Timer->OutCompRegA = TimerCfg->Placeholder;
 }
