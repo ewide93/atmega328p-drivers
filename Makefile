@@ -45,11 +45,10 @@ F_CPU := 16000000UL
 
 CFLAGS = -Wall -Werror -Wextra -Wunused-variable -std=gnu99 -I$(INC_DIR)
 CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
-CFLAGS += -ffunction-sections -fdata-sections -g3
+CFLAGS += -ffunction-sections -fdata-sections -fshort-enums -g3
 DFLAGS = -MMD -MP
 LDFLAGS += -mmcu=$(MCU) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map -Wl,--cref
 LDFLAGS += -Wl,--gc-sections
-# LDFLAGS += -Wl,--print-gc-sections
 OPT := -Os
 
 #================================================================================
