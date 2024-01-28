@@ -18,6 +18,7 @@
 #include "timer.h"
 #include "adc.h"
 #include "uart.h"
+#include "fsm.h"
 
 
 //==================================================================================================
@@ -45,6 +46,15 @@ ADC_CfgType ADC_Config = {
     .Reference = ADC_REF_VCC,
     .TriggerSource = ADC_AUTO_TRIGGER_SOURCE_TIM0_COMPA
 };
+
+FSMType TestMachine;
+typedef enum
+{
+    TEST_STATE_NONE,
+    TEST_STATE_PRINT_1,
+    TEST_STATE_PRINT_2,
+} TestStateEnum;
+
 
 //==================================================================================================
 // Main program entry-point.
@@ -81,9 +91,32 @@ static void ExternalInterrupt1Handler(void)
 static void Timer0_CompareAHandler(void)
 {
     static uint8_t Counter = 0;
-    if (Counter++ > 250)
+    if (Counter++ >= 250)
     {
-        UART_Write("Hello\n", 7);
+        const U8 State = FSM_GetCurrentState(&TestMachine);
+        const U8 PrevState = FSM_GetPreviousState(&TestMachine);
+
+        if (PrevState == FSM_STATE_NONE) UART_Write("Starting!\r\n", 12);
+
+        switch (State)
+        {
+            case TEST_STATE_PRINT_1:
+            {
+                UART_Write("Hello ", 7);
+                FSM_SetState(&TestMachine, TEST_STATE_PRINT_2);
+                break;
+            }
+            case TEST_STATE_PRINT_2:
+            {
+                UART_Write("World!\r\n", 9);
+                FSM_SetState(&TestMachine, TEST_STATE_PRINT_1);
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
         Counter = 0;
     }
 }
@@ -94,6 +127,8 @@ static inline void Setup(void)
     Digital_PinInit(Pin3, IO_MODE_INPUT);
     Digital_PinInit(Pin4, IO_MODE_OUTPUT);
     Digital_PinInit(Pin5, IO_MODE_OUTPUT);
+
+    FSM_Init(&TestMachine);
 
     ISR_ExternalInterruptInit(EXT_INT_0, EXT_INT_SC_FALLING);
     ISR_AddInterruptHandler(ExternalInterrupt0Handler, INTERRUPT_VECTOR_EXT_INT0);
