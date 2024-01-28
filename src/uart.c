@@ -13,6 +13,7 @@
 #include "uart.h"
 #include "isr.h"
 #include "fifo.h"
+#include "register_macros.h"
 
 //==================================================================================================
 // Local preprocessor definitions
@@ -96,7 +97,8 @@ void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 B
 
 void UART_WriteByteBlocking(const char Data)
 {
-    while (!(UCSR0A & (1 << UDRE0))) { };
+    // while (!(UCSR0A & (1 << UDRE0))) { };
+    while (!ReadBit(UCSR0A, UDRE0)) { };
     UDR0 = Data;
 }
 

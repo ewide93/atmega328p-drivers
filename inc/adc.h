@@ -64,19 +64,22 @@ typedef struct ADC_CfgType
 
 
 //==================================================================================================
+// Inline function definitions
+//==================================================================================================
+static inline void ADC_Enable(void)
+{
+    ADCSRA |= (1 << ADEN);
+}
+static inline void ADC_Disable(void)
+{
+    ADCSRA &= ~(1 << ADEN);
+}
+
+
+//==================================================================================================
 // Function prototypes
 //==================================================================================================
-void ADC_Enable(void);
-void ADC_Disable(void);
-void ADC_StartConversion(void);
-void ADC_SetVoltageReference(const U8 Reference);
-void ADC_InputChannelEnable(const U8 Channel);
-void ADC_InputChannelDisable(const U8 Channel);
-void ADC_AutoTriggerEnable(void);
-void ADC_AutoTriggerDisable(void);
-void ADC_SetAutoTriggerSource(const U8 Source);
-void ADC_SetPrescaler(const U8 Prescaler);
-void ADC_Init(const ADC_CfgType* Config);
+void ADC_Init(const ADC_CfgType* Config); /* TODO: Rework this function! */
 U16 ADC_BlockingRead(void);
 
 #endif // _ADC_H_

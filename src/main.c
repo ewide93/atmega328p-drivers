@@ -62,8 +62,9 @@ typedef enum
 int main(void)
 {
     Setup();
+    UART_WriteByteBlocking('H');
 
-    while (1)
+    while (TRUE)
     {
 
     }
