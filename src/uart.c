@@ -43,6 +43,27 @@ static void TxCompleteInterruptHandler(void);
 //==================================================================================================
 // Local function definitions
 //==================================================================================================
+static inline void UART_SetDataBits(const U8 DataBits)
+{
+    UCSR0B |= (DataBits & 0x04);
+    UCSR0C |= ((DataBits & 0x03) << 2);
+}
+
+static inline void UART_SetParity(const U8 Parity)
+{
+    UCSR0C |= ((Parity & 0x03) << 5);
+}
+
+static inline void UART_SetStopBits(const U8 StopBits)
+{
+    UCSR0C |= ((StopBits & 0x01) << 3);
+}
+
+static inline void UART_SetBaudRate(const U8 BaudRate)
+{
+    UBRR0 = BaudRate;
+}
+
 static void TxCompleteInterruptHandler(void)
 {
     U8 TxData = 0;
@@ -57,15 +78,15 @@ static void TxCompleteInterruptHandler(void)
 //==================================================================================================
 // External function definitions
 //==================================================================================================
-void UART_Init(void)
+void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 BaudRate)
 {
     if (UART_Initialized) return;
-    // NOTE: Simple 8N1 configuration for test purposes.
     Fifo_Init(&TxFifo, TxBuffer, UART_RX_BUFFER_SIZE);
 
-    // 8-bit payload, 9600 kbps baud rate.
-    UCSR0C |= (0x03 << 1);
-    UBRR0 = 103;
+    UART_SetDataBits(DataBits);
+    UART_SetParity(Parity);
+    UART_SetStopBits(StopBits);
+    UART_SetBaudRate(BaudRate);
 
     // Enable transmitter hardware.
     UART_TxEnable();

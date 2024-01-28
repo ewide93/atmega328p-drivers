@@ -144,7 +144,7 @@ static inline void Setup(void)
 
     // ADC_Init(&ADC_Config);
     // ADC_AutoTriggerEnable();
-    UART_Init();
+    UART_Init(UART_DATA_BITS_8, UART_PARITY_NONE, UART_STOP_BITS_1, UART_BAUD_RATE_115200);
     ISR_UART_TxInterruptEnable();
 
     ISR_GlobalInterruptEnable();
