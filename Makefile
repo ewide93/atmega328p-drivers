@@ -45,8 +45,9 @@ F_CPU := 16000000UL
 
 LINTER := cppcheck
 LINTER_CACHE_DIR = build/cppcheck_cache
-LINTFLAGS = --enable=all --suppress=missingIncludeSystem -I$(INC_DIR) --quiet
-LINTFLAGS += --std=c99 --platform=avr8 --cppcheck-build-dir=$(LINTER_CACHE_DIR)
+LINTFLAGS = --enable=all -I$(INC_DIR) --quiet --std=c99
+LINTFLAGS += --platform=avr8 --cppcheck-build-dir=$(LINTER_CACHE_DIR)
+LINT_SUPPRESS = --suppress=missingIncludeSystem --suppress=unusedFunction
 
 CFLAGS = -Wall -Werror -Wextra -Wunused-variable -std=gnu99 -I$(INC_DIR)
 CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU)
@@ -104,7 +105,7 @@ clean:
 #================================================================================
 .PHONY: lint
 lint:
-	@$(LINTER) $(LINTFLAGS) .
+	@$(LINTER) $(LINTFLAGS) $(LINT_SUPPRESS) .
 
 #================================================================================
 # Include the dependencies.

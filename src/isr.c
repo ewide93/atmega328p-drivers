@@ -87,7 +87,7 @@ void ISR_GlobalInterruptDisable(void)
 }
 
 
-void ISR_ExternalInterruptEnable(EXT_INT Interrupt)
+void ISR_ExternalInterruptEnable(ExtIntEnum Interrupt)
 {
     if      (Interrupt == EXT_INT_0) { EIMSK |= (1 << INT0); }
     else if (Interrupt == EXT_INT_1) { EIMSK |= (1 << INT1); }
@@ -95,7 +95,7 @@ void ISR_ExternalInterruptEnable(EXT_INT Interrupt)
 }
 
 
-void ISR_ExternalInterruptDisable(EXT_INT Interrupt)
+void ISR_ExternalInterruptDisable(ExtIntEnum Interrupt)
 {
     if      (Interrupt == EXT_INT_0) { EIMSK &= ~(1 << INT0); }
     else if (Interrupt == EXT_INT_1) { EIMSK &= ~(1 << INT1); }
@@ -103,7 +103,7 @@ void ISR_ExternalInterruptDisable(EXT_INT Interrupt)
 }
 
 
-void ISR_ExternalInterruptInit(EXT_INT Interrupt, EXT_INT_SC SenseControl)
+void ISR_ExternalInterruptInit(ExtIntEnum Interrupt, ExtIntSenseEnum SenseControl)
 {
     switch (SenseControl)
     {
@@ -143,7 +143,7 @@ void ISR_ExternalInterruptInit(EXT_INT Interrupt, EXT_INT_SC SenseControl)
 }
 
 
-void ISR_AddInterruptHandler(VoidFunctionPtr Function, INTERRUPT_VECTOR InterruptVector)
+void ISR_AddInterruptHandler(VoidFunctionPtr Function, InterruptVectorEnum InterruptVector)
 {
     InterruptHandlers[InterruptVector] = Function;
 }

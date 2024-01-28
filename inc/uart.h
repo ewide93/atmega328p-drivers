@@ -35,5 +35,31 @@
 //==================================================================================================
 void UART_Init(void);
 void UART_WriteByteBlocking(const char Data);
+void UART_Write(const char* Data, const U8 Size);
+
+
+//==================================================================================================
+// Inline function definitions
+//==================================================================================================
+static inline void UART_TxEnable(void)
+{
+    UCSR0B |= (1 << TXEN0);
+}
+
+static inline void UART_TxDisable(void)
+{
+    UCSR0B &= ~(1 << TXEN0);
+}
+
+static inline void UART_RxEnable(void)
+{
+    UCSR0B |= (1 << RXEN0);
+}
+
+static inline void UART_RxDisable(void)
+{
+    UCSR0B &= ~(1 << RXEN0);
+}
+
 
 #endif // _UART_H_

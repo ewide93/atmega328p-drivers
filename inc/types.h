@@ -33,7 +33,7 @@ typedef float    F32;
 
 typedef bool     BOOL;
 #define TRUE     true
-#define FALSE    !true
+#define FALSE    false
 
 
 //==================================================================================================

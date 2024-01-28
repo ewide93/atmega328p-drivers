@@ -20,12 +20,12 @@
 //==================================================================================================
 // Definitions of enumerations and structures.
 //==================================================================================================
-typedef enum IO_MODE
+typedef enum IOMode
 {
     IO_MODE_INPUT,
     IO_MODE_INPUT_PULLUP,
     IO_MODE_OUTPUT
-} IO_MODE;
+} IOModeEnum;
 
 typedef struct IOPortType
 {
@@ -61,7 +61,7 @@ extern PinType* Pin13;
 //==================================================================================================
 // Function prototypes.
 //==================================================================================================
-void Digital_PinInit(PinType* Pin, enum IO_MODE Mode);
+void Digital_PinInit(PinType* Pin, IOModeEnum Mode);
 void Digital_SetPin(PinType* Pin);
 void Digital_ClearPin(PinType* Pin);
 void Digital_TogglePin(PinType* Pin);

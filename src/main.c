@@ -83,10 +83,7 @@ static void Timer0_CompareAHandler(void)
     static uint8_t Counter = 0;
     if (Counter++ > 250)
     {
-        static U8 Message = 0x41;
-        UART_WriteByteBlocking(Message);
-        Message++;
-        if (Message > 0x5A) Message = 0x41;
+        UART_Write("Hello\n", 7);
         Counter = 0;
     }
 }
@@ -113,6 +110,7 @@ static inline void Setup(void)
     // ADC_Init(&ADC_Config);
     // ADC_AutoTriggerEnable();
     UART_Init();
+    ISR_UART_TxInterruptEnable();
 
     ISR_GlobalInterruptEnable();
 }

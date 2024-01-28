@@ -157,7 +157,6 @@ def generate_source_file(file_name: str, path: Path | None, line_length: int) ->
         f.write(file_header(line_length, file_name))
         f.write(block_comment(line_length, "Include directives"))
         f.write(block_comment(line_length, "Local preprocessor definitions"))
-        f.write(block_comment(line_length, "Local preprocessor definitions"))
         f.write(block_comment(line_length, "Local variables"))
         f.write(block_comment(line_length, "Local function prototypes"))
         f.write(block_comment(line_length, "External variable definitions"))

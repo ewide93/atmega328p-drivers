@@ -66,7 +66,7 @@ PinType* Pin13 = &Pin13_Local;
 //==================================================================================================
 // Function definitions.
 //==================================================================================================
-void Digital_PinInit(PinType* Pin, enum IO_MODE Mode)
+void Digital_PinInit(PinType* Pin, IOModeEnum Mode)
 {
     if (Pin->PinNum > PIN_NUM_MAX) return;
     if (Pin->IOPort == IO_PORT_C_ADDRESS && Pin->PinNum > (PIN_NUM_MAX - 1)) return;
