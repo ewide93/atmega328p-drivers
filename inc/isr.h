@@ -15,6 +15,7 @@
 #include "types.h"
 #include "hw_cfg.h"
 #include "timer.h"
+#include "register_macros.h"
 
 
 //==================================================================================================
@@ -199,6 +200,24 @@ static inline void ISR_UART_DataRegEmptyInterruptEnable(void)
 static inline void ISR_UART_DataRegEmptyInterruptDisable(void)
 {
     UCSR0B &= ~(1 << UDRIE0);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_SPI_InterruptEnable
+// Brief    : Enable SPI transfer complete interrupt.
+//--------------------------------------------------------------------------------------------------
+static inline void ISR_SPI_InterruptEnable(void)
+{
+    SetBit(SPCR, SPIE);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_SPI_InterruptDisable
+// Brief    : Disable SPI transfer complete interrupt.
+//--------------------------------------------------------------------------------------------------
+static inline void ISR_SPI_InterruptDisable(void)
+{
+    ClearBit(SPCR, SPIE);
 }
 
 #endif // _ISR_H_

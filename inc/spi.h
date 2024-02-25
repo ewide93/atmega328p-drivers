@@ -1,12 +1,12 @@
 //==================================================================================================
 //
-// File name: uart.h
+// File name: spi.h
 //
 // Purpose:
 //
 //==================================================================================================
-#ifndef _UART_H_
-#define _UART_H_
+#ifndef _SPI_H_
+#define _SPI_H_
 
 
 //==================================================================================================
@@ -14,32 +14,24 @@
 //==================================================================================================
 #include "types.h"
 #include "hw_cfg.h"
+#include "digital.h"
+#include "register_macros.h"
 
 //==================================================================================================
 // Preprocessor definitions
 //==================================================================================================
-#define UART_DATA_BITS_5        (0x00U)
-#define UART_DATA_BITS_6        (0x01U)
-#define UART_DATA_BITS_7        (0x02U)
-#define UART_DATA_BITS_8        (0x03U)
-#define UART_DATA_BITS_9        (0x07U)
+#define SPI_SCK_PIN                 Pin13;
+#define SPI_MISO_PIN                Pin12;
+#define SPI_MOSI_PIN                Pin11;
+#define SPI_SS_PIN                  Pin10;
 
-#define UART_PARITY_NONE        (0x00U)
-#define UART_PARITY_EVEN        (0x02U)
-#define UART_PARITY_ODD         (0x03U)
+#define SPI_MODE_0                  (0x00U)       /* CPOL = 0, CPHA = 0 */
+#define SPI_MODE_1                  (0x01U)       /* CPOL = 0, CPHA = 1 */
+#define SPI_MODE_2                  (0x02U)       /* CPOL = 1, CPHA = 0 */
+#define SPI_MODE_3                  (0x03U)       /* CPOL = 1, CPHA = 1 */
 
-#define UART_STOP_BITS_1        (0x00U)
-#define UART_STOP_BITS_2        (0x01U)
-
-#define UART_BAUD_RATE_9600      (103U)
-#define UART_BAUD_RATE_14400     (68U)
-#define UART_BAUD_RATE_19200     (51U)
-#define UART_BAUD_RATE_28800     (34U)
-#define UART_BAUD_RATE_38400     (25U)
-#define UART_BAUD_RATE_57600     (16U)
-#define UART_BAUD_RATE_76800     (12U)
-#define UART_BAUD_RATE_115200    (8U)
-
+#define SPI_DATA_ORDER_MSB_FIRST    (0x00U)
+#define SPI_DATA_ORDER_LSB_FIRST    (0x01U)
 
 //==================================================================================================
 // Structures and enumerations
@@ -54,33 +46,15 @@
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
-void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 BaudRate);
-void UART_WriteByteBlocking(const char Data);
-void UART_Write(const char* Data, const U8 Length);
-
+void SPI_SlaveInit();
+void SPI_MasterInit();
 
 //==================================================================================================
 // Inline function definitions
 //==================================================================================================
-static inline void UART_TxEnable(void)
+static inline void SPI_Enable(void)
 {
-    UCSR0B |= (1 << TXEN0);
+    SetBit(SPCR, SPE);
 }
 
-static inline void UART_TxDisable(void)
-{
-    UCSR0B &= ~(1 << TXEN0);
-}
-
-static inline void UART_RxEnable(void)
-{
-    UCSR0B |= (1 << RXEN0);
-}
-
-static inline void UART_RxDisable(void)
-{
-    UCSR0B &= ~(1 << RXEN0);
-}
-
-
-#endif // _UART_H_
+#endif // _SPI_H_

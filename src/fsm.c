@@ -52,12 +52,12 @@ void FSM_SetState(FSMType* StateMachine, const U8 NewState)
     StateMachine->CurrentState = NewState;
 }
 
-U8 FSM_GetCurrentState(FSMType* StateMachine)
+U8 FSM_GetCurrentState(const FSMType* StateMachine)
 {
     return StateMachine->CurrentState;
 }
 
-U8 FSM_GetPreviousState(FSMType* StateMachine)
+U8 FSM_GetPreviousState(const FSMType* StateMachine)
 {
     return StateMachine->PreviousState;
 }

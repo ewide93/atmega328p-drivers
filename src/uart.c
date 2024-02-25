@@ -18,16 +18,15 @@
 //==================================================================================================
 // Local preprocessor definitions
 //==================================================================================================
-#define UART_TX_BUFFER_SIZE 64
-#define UART_RX_BUFFER_SIZE 64
+#define UART_TX_BUFFER_LENGTH 64
+#define UART_RX_BUFFER_LENGTH 64
 
 
 //==================================================================================================
 // Local variables
 //==================================================================================================
 static BOOL UART_Initialized = FALSE;
-static U8 TxBuffer[UART_TX_BUFFER_SIZE] = { 0 };
-static U8 NofTxBytes = 0;
+static U8 TxBuffer[UART_TX_BUFFER_LENGTH] = { 0 };
 static FifoType TxFifo;
 
 //==================================================================================================
@@ -68,10 +67,9 @@ static inline void UART_SetBaudRate(const U8 BaudRate)
 static void TxCompleteInterruptHandler(void)
 {
     U8 TxData = 0;
-    if (NofTxBytes > 0)
+    if (TxFifo.NofItems > 0)
     {
         Fifo_ReadByte(&TxFifo, &TxData);
-        NofTxBytes--;
         UDR0 = TxData;
     }
 }
@@ -82,14 +80,13 @@ static void TxCompleteInterruptHandler(void)
 void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 BaudRate)
 {
     if (UART_Initialized) return;
-    Fifo_Init(&TxFifo, TxBuffer, UART_RX_BUFFER_SIZE);
+    Fifo_Init(&TxFifo, TxBuffer, UART_RX_BUFFER_LENGTH);
 
     UART_SetDataBits(DataBits);
     UART_SetParity(Parity);
     UART_SetStopBits(StopBits);
     UART_SetBaudRate(BaudRate);
 
-    // Enable transmitter hardware.
     UART_TxEnable();
     ISR_AddInterruptHandler(TxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_TX);
     UART_Initialized = TRUE;
@@ -102,17 +99,28 @@ void UART_WriteByteBlocking(const char Data)
     UDR0 = Data;
 }
 
-void UART_Write(const char* Data, const U8 Size)
+void UART_Write(const char* Data, const U8 Length)
 {
     U8 TxData = 0;
-    for (U8 i = 0; i < Size; i++)
+
+    if (Fifo_GetNofAvailable(&TxFifo) >= Length)
     {
-        Fifo_WriteByte(&TxFifo, Data[i]);
-        NofTxBytes++;
+        /* Check wether the data to be added is to be transmitted immediately. */
+        BOOL TxFifoEmpty = Fifo_Empty(&TxFifo);
+
+        for (U8 i = 0; i < Length; i++)
+        {
+            Fifo_WriteByte(&TxFifo, Data[i]);
+        }
+
+        /* Start sending data if no other data is in FIFO. */
+        if (TxFifoEmpty)
+        {
+            Fifo_ReadByte(&TxFifo, &TxData);
+            UDR0 = TxData;
+        }
     }
-    Fifo_ReadByte(&TxFifo, &TxData);
-    NofTxBytes--;
-    UDR0 = TxData;
+    else return;
 }
 
 

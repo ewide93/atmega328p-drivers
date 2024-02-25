@@ -26,10 +26,11 @@
 typedef struct FifoType
 {
     U8* Buffer;
-    U8 Size;
+    U8 Length;
     U8 Mask;
     U8 Head;
     U8 Tail;
+    U8 NofItems;
 } FifoType;
 
 //==================================================================================================
@@ -40,10 +41,11 @@ typedef struct FifoType
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
-void Fifo_Init(FifoType* Fifo, U8* Buffer, const U8 Size);
+void Fifo_Init(FifoType* Fifo, U8* Buffer, const U8 Length);
 void Fifo_WriteByte(FifoType* Fifo, U8 Data);
 void Fifo_ReadByte(FifoType* Fifo, U8* Data);
-BOOL Fifo_Empty(FifoType* Fifo);
-BOOL Fifo_Full(FifoType* Fifo);
+BOOL Fifo_Empty(const FifoType* Fifo);
+BOOL Fifo_Full(const FifoType* Fifo);
+U8 Fifo_GetNofAvailable(const FifoType* Fifo);
 
 #endif // _FIFO_H_
