@@ -14,6 +14,9 @@
 //==================================================================================================
 #include "types.h"
 #include "hw_cfg.h"
+#include "isr.h"
+#include "fifo.h"
+#include "register_macros.h"
 
 //==================================================================================================
 // Preprocessor definitions
@@ -55,8 +58,9 @@
 // Function prototypes
 //==================================================================================================
 void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 BaudRate);
-void UART_WriteByteBlocking(const char Data);
-void UART_Write(const char* Data, const U8 Length);
+void UART_WriteByteBlocking(const U8 Data);
+void UART_WriteByte(const U8 Data);
+void UART_WriteString(const char* Data, const U8 Length);
 
 
 //==================================================================================================

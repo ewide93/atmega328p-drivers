@@ -14,7 +14,7 @@
 //==================================================================================================
 #define SetBit(Register, Bit)                ((Register) |= (1 << (Bit)))
 #define ClearBit(Register, Bit)              ((Register) &= ~(1 << (Bit)))
-#define ReadBit(Register, Bit)               (((Register) & (1 << (Bit))) != 0)
+#define ReadBit(Register, Bit)               (((Register) & (1 << (Bit))))
 #define MaskShiftLeft(Val, Mask, Shift)      (((Val) & (Mask)) << (Shift))
 #define MaskShiftRight(Val, Mask, Shift)     (((Val) & (Mask)) >> (Shift))
 

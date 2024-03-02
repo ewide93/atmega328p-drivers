@@ -11,9 +11,6 @@
 // Include directives
 //==================================================================================================
 #include "uart.h"
-#include "isr.h"
-#include "fifo.h"
-#include "register_macros.h"
 
 //==================================================================================================
 // Local preprocessor definitions
@@ -21,24 +18,20 @@
 #define UART_TX_BUFFER_LENGTH 64
 #define UART_RX_BUFFER_LENGTH 64
 
-
 //==================================================================================================
 // Local variables
 //==================================================================================================
 static BOOL UART_Initialized = FALSE;
 static U8 TxBuffer[UART_TX_BUFFER_LENGTH] = { 0 };
+static U8 RxBuffer[UART_RX_BUFFER_LENGTH] = { 0 };
 static FifoType TxFifo;
+static FifoType RxFifo;
 
 //==================================================================================================
 // Local function prototypes
 //==================================================================================================
-static void TxCompleteInterruptHandler(void);
-
-
-//==================================================================================================
-// External variable definitions
-//==================================================================================================
-
+static void UART_TxCompleteInterruptHandler(void);
+static void UART_RxCompleteInterruptHandler(void);
 
 //==================================================================================================
 // Local function definitions
@@ -64,7 +57,13 @@ static inline void UART_SetBaudRate(const U8 BaudRate)
     UBRR0 = BaudRate;
 }
 
-static void TxCompleteInterruptHandler(void)
+static inline BOOL UART_DataRegEmpty(void)
+{
+    return (ReadBit(UCSR0A, UDRE0) != 0);
+}
+
+
+static void UART_TxCompleteInterruptHandler(void)
 {
     U8 TxData = 0;
     if (TxFifo.NofItems > 0)
@@ -74,32 +73,67 @@ static void TxCompleteInterruptHandler(void)
     }
 }
 
+static void UART_RxCompleteInterruptHandler(void)
+{
+    const U8 RxData = UDR0;
+    Fifo_WriteByte(&RxFifo, RxData);
+}
+
+
 //==================================================================================================
 // External function definitions
 //==================================================================================================
 void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 BaudRate)
 {
     if (UART_Initialized) return;
-    Fifo_Init(&TxFifo, TxBuffer, UART_RX_BUFFER_LENGTH);
 
+    /* Initialize Rx/Tx buffer objects. */
+    Fifo_Init(&TxFifo, TxBuffer, UART_RX_BUFFER_LENGTH);
+    Fifo_Init(&RxFifo, RxBuffer, UART_RX_BUFFER_LENGTH);
+
+    /* Initialize UART hardware. */
     UART_SetDataBits(DataBits);
     UART_SetParity(Parity);
     UART_SetStopBits(StopBits);
     UART_SetBaudRate(BaudRate);
 
+    /* Configure interrupt handlers for Rx/Tx interrupts. */
+    ISR_AddInterruptHandler(UART_TxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_TX);
+    ISR_AddInterruptHandler(UART_RxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_RX);
+
+    /* Enable transmitter & reciever hardware. */
     UART_TxEnable();
-    ISR_AddInterruptHandler(TxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_TX);
+    UART_RxEnable();
+
     UART_Initialized = TRUE;
 }
 
-void UART_WriteByteBlocking(const char Data)
+void UART_WriteByteBlocking(const U8 Data)
 {
-    // while (!(UCSR0A & (1 << UDRE0))) { };
-    while (!ReadBit(UCSR0A, UDRE0)) { };
-    UDR0 = Data;
+    const U8 TxData = Data;
+    while (!UART_DataRegEmpty()) { };
+    UDR0 = TxData;
 }
 
-void UART_Write(const char* Data, const U8 Length)
+void UART_WriteByte(const U8 Data)
+{
+    if (!Fifo_Full(&TxFifo))
+    {
+        const U8 TxData = Data;
+
+        if (Fifo_Empty(&TxFifo) && UART_DataRegEmpty())
+        {
+            UDR0 = TxData;
+        }
+        else
+        {
+            Fifo_WriteByte(&TxFifo, TxData);
+        }
+    }
+
+}
+
+void UART_WriteString(const char* Data, const U8 Length)
 {
     U8 TxData = 0;
 

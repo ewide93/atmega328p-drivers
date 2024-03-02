@@ -36,7 +36,7 @@ CC := avr-gcc
 OBJCOPY := avr-objcopy
 AVRDUDE := avrdude
 
-PORT := COM6
+PORT := COM5
 PROGRAMMER := arduino
 BAUD_RATE := 115200
 
