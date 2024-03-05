@@ -16,10 +16,13 @@
 #include "hw_cfg.h"
 #include "register_macros.h"
 #include "fifo.h"
+#include "isr.h"
 
 //==================================================================================================
 // Preprocessor definitions
 //==================================================================================================
+#define ADC_NOF_CHANNELS                    (8U)
+
 #define ADC_PRESCALER_2                     (0x01U)
 #define ADC_PRESCALER_4                     (0x02U)
 #define ADC_PRESCALER_8                     (0x03U)
@@ -31,15 +34,6 @@
 #define ADC_REF_EXTERNAL                    (0x00U)
 #define ADC_REF_VCC                         (0x01U)
 #define ADC_REF_INTERNAL                    (0x04U)
-
-#define ADC_CHANNEL_0                       (0x00U)
-#define ADC_CHANNEL_1                       (0x01U)
-#define ADC_CHANNEL_2                       (0x02U)
-#define ADC_CHANNEL_3                       (0x03U)
-#define ADC_CHANNEL_4                       (0x04U)
-#define ADC_CHANNEL_5                       (0x05U)
-#define ADC_CHANNEL_6                       (0x06U)
-#define ADC_CHANNEL_7                       (0x07U)
 
 #define ADC_AUTO_TRIGGER_SOURCE_NONE        (0x00U)
 #define ADC_AUTO_TRIGGER_SOURCE_ACOMP       (0x01U)
@@ -53,6 +47,17 @@
 //==================================================================================================
 // Structures and enumerations
 //==================================================================================================
+typedef enum
+{
+    ADC_CHANNEL_0 = 0U,
+    ADC_CHANNEL_1 = 1U,
+    ADC_CHANNEL_2 = 2U,
+    ADC_CHANNEL_3 = 3U,
+    ADC_CHANNEL_4 = 4U,
+    ADC_CHANNEL_5 = 5U,
+    ADC_CHANNEL_6 = 6U,
+    ADC_CHANNEL_7 = 7U
+} ADC_ChannelNumberEnum;
 
 //==================================================================================================
 // External variable declarations
@@ -76,5 +81,9 @@ static inline void ADC_Disable(void)
 //==================================================================================================
 void ADC_Init(const U8 Reference, const U8 Prescaler);
 U16 ADC_BlockingRead(const U8 Channel);
+void ADC_ConfigureAutoSampling(const U8 Channel);
+void ADC_StartAutoSampling(void);
+void ADC_StopAutoSampling(void);
+U16 ADC_GetLastSample(const U8 Channel);
 
 #endif // _ADC_H_

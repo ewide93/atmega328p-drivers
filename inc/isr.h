@@ -131,24 +131,6 @@ void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt);
 void ISR_TimerInterruptToggle(TimerType* TimerHandle, const uint8_t Interrupt);
 
 //--------------------------------------------------------------------------------------------------
-// Function : ISR_ADC_InterruptEnable
-// Brief    : Enable conversion complete interrupt for ADC.
-//--------------------------------------------------------------------------------------------------
-void ISR_ADC_InterruptEnable(void);
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_ADC_InterruptDisable
-// Brief    : Disable conversion complete interrupt for ADC.
-//--------------------------------------------------------------------------------------------------
-void ISR_ADC_InterruptDisable(void);
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_ADC_InterruptToggle
-// Brief    : Toggle conversion complete interrupt for ADC.
-//--------------------------------------------------------------------------------------------------
-void ISR_ADC_InterruptToggle(void);
-
-//--------------------------------------------------------------------------------------------------
 // Function : ISR_UART_RxInterruptEnable
 // Brief    : Enable Rx complete interrupt for UART peripheral.
 //--------------------------------------------------------------------------------------------------
@@ -220,4 +202,21 @@ static inline void ISR_SPI_InterruptDisable(void)
     ClearBit(SPCR, SPIE);
 }
 
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_ADC_InterruptEnable
+// Brief    : Enable ADC conversion complete interrupt.
+//--------------------------------------------------------------------------------------------------
+static inline void ISR_ADC_InterruptEnable(void)
+{
+    SetBit(ADCSRA, ADIE);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Function : ISR_ADC_InterruptDisable
+// Brief    : Disable ADC conversion complete interrupt.
+//--------------------------------------------------------------------------------------------------
+static inline void ISR_ADC_InterruptDisable(void)
+{
+    ClearBit(ADCSRA, ADIE);
+}
 #endif // _ISR_H_
