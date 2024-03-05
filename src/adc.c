@@ -15,9 +15,27 @@
 //==================================================================================================
 // Local preprocessor definitions
 //==================================================================================================
-#define ADMUX_VREF_SHIFT    (6U)
-#define ADMUX_VREF_MASK     (0x3FU)
+#define ADMUX_VREF_SHIFT                (6U)
+#define ADMUX_VREF_CLEAR_MASK           (0x3FU)
+#define ADCSRA_PRESCALER_CLEAR_MASK     (0xF8U)
+#define ADMUX_CLEAR_CHANNEL_MASK        (0xF8U)
+#define ADMUX_SET_CHANNEL_MASK          (0x07U)
 
+//==================================================================================================
+// Structures and enumerations
+//==================================================================================================
+typedef enum
+{
+    ADC_CHANNEL_STATUS_INACTIVE,
+    ADC_CHANNEL_STATUS_ACTIVE
+} ADC_StatusEnum;
+
+typedef struct
+{
+    U8 ChannelNum;
+    U8 Status;
+    FifoType SampleData;
+} ADC_ChannelType;
 
 //==================================================================================================
 // Local variables
@@ -29,7 +47,6 @@
 //==================================================================================================
 static inline void ADC_StartConversion(void);
 static inline void ADC_SetVoltageReference(const U8 Reference);
-static inline void ADC_SelectChannel(const U8 Channel);
 static inline void ADC_AutoTriggerEnable(void);
 static inline void ADC_AutoTriggerDisable(void);
 static inline void ADC_SetAutoTriggerSource(const U8 Source);
@@ -51,14 +68,8 @@ static inline void ADC_StartConversion(void)
 
 static inline void ADC_SetVoltageReference(const U8 Reference)
 {
-    ADMUX &= 0x3F;
+    ADMUX &= ADMUX_VREF_CLEAR_MASK;
     ADMUX |= (Reference << ADMUX_VREF_SHIFT);
-}
-
-static inline void ADC_SelectChannel(const U8 Channel)
-{
-    ADMUX &= ~(1 << 0x07);
-    ADMUX |= (Channel & 0x07);
 }
 
 static inline void ADC_AutoTriggerEnable(void)
@@ -79,7 +90,7 @@ static inline void ADC_SetAutoTriggerSource(const U8 Source)
 
 static inline void ADC_SetPrescaler(const U8 Prescaler)
 {
-    ADCSRA &= 0xF8;
+    ADCSRA &= ADCSRA_PRESCALER_CLEAR_MASK;
     ADCSRA |= Prescaler;
 }
 
@@ -87,12 +98,23 @@ static inline void ADC_SetPrescaler(const U8 Prescaler)
 //==================================================================================================
 // External function definitions
 //==================================================================================================
-void ADC_Init(const ADC_CfgType* Config)
+void ADC_Init(const U8 Reference, const U8 Prescaler)
 {
-    ADC_SetVoltageReference(Config->Reference);
-    ADC_SetAutoTriggerSource(Config->TriggerSource);
-    ADC_SetPrescaler(Config->Prescaler);
+    ADC_SetVoltageReference(Reference);
+    ADC_SetPrescaler(Prescaler);
+    ADC_Enable();
 }
 
+U16 ADC_BlockingRead(const U8 Channel)
+{
+    U16 AD_Val = 0;
+    ADMUX &= ADMUX_CLEAR_CHANNEL_MASK;
+    ADMUX |= (Channel & ADMUX_SET_CHANNEL_MASK);
+    ADC_StartConversion();
+    while (!ReadBit(ADCSRA, ADIF)) { };
+    AD_Val = ADC;
+    
+    return AD_Val;
+}
 
 

@@ -19,6 +19,7 @@
 #include "adc.h"
 #include "uart.h"
 #include "fsm.h"
+#include <stdio.h>
 
 
 //==================================================================================================
@@ -68,12 +69,15 @@ int main(void)
 static void Timer0_CompareAHandler(void)
 {
     static U8 Counter = 0;
-    static U8 Msg = 0x41;
     if (Counter++ >= 250)
     {
-        UART_WriteByte(Msg++);
-        UART_WriteByte(Msg++);
-        if (Msg > 0x5B) Msg = 0x41;
+        U16 PotVal = 0;
+        char Msg[5] = {'\0'};
+
+        PotVal = ADC_BlockingRead(ADC_CHANNEL_1);
+        sprintf(Msg, "%u", PotVal);
+        UART_WriteString(Msg, 5);
+        UART_WriteString("\n", 2);
         Counter = 0;
     }
 }
@@ -84,8 +88,7 @@ static inline void Setup(void)
     ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPA);
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
 
-    // ADC_Init(&ADC_Config);
-    // ADC_AutoTriggerEnable();
+    ADC_Init(ADC_REF_EXTERNAL, ADC_PRESCALER_128);
 
     UART_Init(UART_DATA_BITS_8, UART_PARITY_NONE, UART_STOP_BITS_1, UART_BAUD_RATE_115200);
     ISR_UART_TxInterruptEnable();
