@@ -216,8 +216,27 @@ void ADC_ConfigureAutoSampling(const U8 Channel)
     AutoSamplingConfig.NofChannels++;
 }
 
+void ADC_ResetAutoSampling(void)
+{
+    for (U8 i = 0; i < ADC_NOF_CHANNELS; i++)
+    {
+        ADC_Channels[i].Enabled = FALSE;
+        ADC_Channels[i].LastSample = 0;
+    }
+
+    AutoSamplingConfig.ActiveChannel = ADC_DUMMY_CHANNEL;
+    AutoSamplingConfig.FirstChannel = ADC_DUMMY_CHANNEL;
+    AutoSamplingConfig.LastChannel = ADC_DUMMY_CHANNEL;
+    AutoSamplingConfig.NofChannels = 0;
+    AutoSamplingConfig.NofSamples = 0;
+    AutoSamplingConfig.Status = AUTO_SAMPLING_STATUS_IDLE;
+}
+
 void ADC_StartAutoSampling(void)
 {
+    /* Don't start unless at least one channel is configured. */
+    if (AutoSamplingConfig.NofChannels == 0) return;
+    
     /* First start enables interrupts. */
     if (AutoSamplingConfig.Status == AUTO_SAMPLING_STATUS_IDLE)
     {
@@ -232,11 +251,6 @@ void ADC_StartAutoSampling(void)
     /* Start sampling of first channel in configured sequence. */
     ADC_Read(AutoSamplingConfig.FirstChannel);
 }
-
-// void ADC_StopAutoSampling(void)
-// {
-
-// }
 
 U16 ADC_GetLastSample(const U8 Channel)
 {
