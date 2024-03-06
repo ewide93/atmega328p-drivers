@@ -75,7 +75,6 @@ static inline void ADC_Disable(void)
     ADCSRA &= ~(1 << ADEN);
 }
 
-
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
@@ -83,7 +82,7 @@ void ADC_Init(const U8 Reference, const U8 Prescaler);
 U16 ADC_BlockingRead(const U8 Channel);
 void ADC_ConfigureAutoSampling(const U8 Channel);
 void ADC_StartAutoSampling(void);
-void ADC_StopAutoSampling(void);
+// void ADC_StopAutoSampling(void);
 U16 ADC_GetLastSample(const U8 Channel);
 
 #endif // _ADC_H_

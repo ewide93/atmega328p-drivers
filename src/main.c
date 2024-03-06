@@ -47,6 +47,7 @@ int main(void)
 {
     Setup();
     UART_WriteString("Starting!\n", 11);
+
     ADC_StartAutoSampling();
 
     while (TRUE)
@@ -65,25 +66,20 @@ static void Timer0_CompareAHandler(void)
     static U8 Counter = 0;
     if (Counter++ >= 250)
     {
-        U16 PotVal = 0;
-        U16 DividerVal = 0;
-        char PotMsg[5] = {'\0'};
-        char DividerMsg[5] = {'\0'};
+        U16 AD_Vals[2] = { 0 };
+        char Msg[2][10] = { 0 };
 
-        PotVal = ADC_GetLastSample(ADC_CHANNEL_4);
-        DividerVal = ADC_GetLastSample(ADC_CHANNEL_6);
+        AD_Vals[0] = ADC_GetLastSample(ADC_CHANNEL_0);
+        AD_Vals[1] = ADC_GetLastSample(ADC_CHANNEL_3);
 
-        sprintf(PotMsg, "%u", PotVal);
-        sprintf(DividerMsg, "%u", DividerVal);
-
-        UART_WriteString(PotMsg, 5);
-        UART_WriteString("\n", 2);
-
-        UART_WriteString(DividerMsg, 5);
-        UART_WriteString("\n", 2);
+        for (U8 i = 0; i < 2; i++)
+        {
+            sprintf(Msg[i], "%u", AD_Vals[i]);
+            UART_WriteString(Msg[i], 5);
+            UART_WriteString("\n", 2);
+        }
 
         ADC_StartAutoSampling();
-
         Counter = 0;
     }
 }
@@ -97,8 +93,8 @@ static inline void Setup(void)
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
 
     ADC_Init(ADC_REF_EXTERNAL, ADC_PRESCALER_128);
-    ADC_ConfigureAutoSampling(ADC_CHANNEL_4);
-    ADC_ConfigureAutoSampling(ADC_CHANNEL_6);
+    ADC_ConfigureAutoSampling(ADC_CHANNEL_0);
+    ADC_ConfigureAutoSampling(ADC_CHANNEL_3);
     ISR_ADC_InterruptEnable();
 
     UART_Init(UART_DATA_BITS_8, UART_PARITY_NONE, UART_STOP_BITS_1, UART_BAUD_RATE_115200);

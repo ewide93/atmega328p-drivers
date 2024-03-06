@@ -28,7 +28,6 @@
 //==================================================================================================
 typedef struct
 {
-    U8 ChannelNum;
     BOOL Enabled;
     U16 LastSample;     /* NOTE: Replace with ring buffer? */
 } ADC_ChannelType;
@@ -46,6 +45,7 @@ typedef struct
     U8 FirstChannel;
     U8 LastChannel;
     U8 NofChannels;
+    U8 NofSamples;
     U8 Status;
 } ADC_AutoSamplingConfigType;
 
@@ -54,22 +54,23 @@ typedef struct
 //==================================================================================================
 static ADC_ChannelType ADC_Channels[ADC_NOF_CHANNELS] =
 {
-    { .ChannelNum = ADC_CHANNEL_0, .Enabled = FALSE, .LastSample = 0 },
-    { .ChannelNum = ADC_CHANNEL_1, .Enabled = FALSE, .LastSample = 0 },
-    { .ChannelNum = ADC_CHANNEL_2, .Enabled = FALSE, .LastSample = 0 },
-    { .ChannelNum = ADC_CHANNEL_3, .Enabled = FALSE, .LastSample = 0 },
-    { .ChannelNum = ADC_CHANNEL_4, .Enabled = FALSE, .LastSample = 0 },
-    { .ChannelNum = ADC_CHANNEL_5, .Enabled = FALSE, .LastSample = 0 },
-    { .ChannelNum = ADC_CHANNEL_6, .Enabled = FALSE, .LastSample = 0 },
-    { .ChannelNum = ADC_CHANNEL_7, .Enabled = FALSE, .LastSample = 0 }
+    { .Enabled = FALSE, .LastSample = 0 },
+    { .Enabled = FALSE, .LastSample = 0 },
+    { .Enabled = FALSE, .LastSample = 0 },
+    { .Enabled = FALSE, .LastSample = 0 },
+    { .Enabled = FALSE, .LastSample = 0 },
+    { .Enabled = FALSE, .LastSample = 0 },
+    { .Enabled = FALSE, .LastSample = 0 },
+    { .Enabled = FALSE, .LastSample = 0 }
 };
 
 static ADC_AutoSamplingConfigType AutoSamplingConfig =
 {
-    .ActiveChannel = ADC_CHANNEL_0,
-    .FirstChannel = ADC_CHANNEL_0,
-    .LastChannel = ADC_CHANNEL_0,
+    .ActiveChannel = ADC_DUMMY_CHANNEL,
+    .FirstChannel = ADC_DUMMY_CHANNEL,
+    .LastChannel = ADC_DUMMY_CHANNEL,
     .NofChannels = 0,
+    .NofSamples = 0,
     .Status = AUTO_SAMPLING_STATUS_IDLE
 };
 
@@ -137,39 +138,27 @@ static inline void ADC_Read(const U8 Channel)
 static void ADC_ConversionCompleteInterruptHandler(void)
 {
     const U8 CurrentChannel = AutoSamplingConfig.ActiveChannel;
-    U8 i = CurrentChannel + 1;
-    U8 NextChannel = ADC_DUMMY_CHANNEL;
     const U16 AD_Val = ADC;
 
     ADC_Channels[CurrentChannel].LastSample = AD_Val;
+    AutoSamplingConfig.NofSamples++;
 
-    if (i == ADC_NOF_CHANNELS)
+    if (AutoSamplingConfig.NofSamples < AutoSamplingConfig.NofChannels)
     {
-        AutoSamplingConfig.Status = AUTO_SAMPLING_STATUS_DONE;
-    }
-    else
-    {
-        for (U8 i = CurrentChannel + 1; i < ADC_NOF_CHANNELS; i++)
+        for (U8 i = (CurrentChannel + 1); i <= AutoSamplingConfig.LastChannel; i++)
         {
             if (ADC_Channels[i].Enabled)
             {
-                NextChannel = i;
-                break;
+                AutoSamplingConfig.ActiveChannel = i;
+                ADC_Read(i);
+                return;
             }
             else { }
-
         }
-
-        if (NextChannel == ADC_DUMMY_CHANNEL)
-        {
-            AutoSamplingConfig.Status = AUTO_SAMPLING_STATUS_DONE;
-        }
-        else
-        {
-            AutoSamplingConfig.ActiveChannel = NextChannel;
-            ADC_Read(NextChannel);
-        }
-
+    }
+    else
+    {
+        AutoSamplingConfig.Status = AUTO_SAMPLING_STATUS_DONE;
     }
 }
 
@@ -196,8 +185,12 @@ U16 ADC_BlockingRead(const U8 Channel)
 
 void ADC_ConfigureAutoSampling(const U8 Channel)
 {
-    if (AutoSamplingConfig.Status != AUTO_SAMPLING_STATUS_IDLE) return;
+    /* Return early if argument Channel is out of bounds or if a sampling sequence is in progress. */
+    if (AutoSamplingConfig.Status == AUTO_SAMPLING_STATUS_RUNNING ||
+        Channel > ADC_NOF_CHANNELS - 1) return;
 
+    /* Initialize configuration structure if this is the first channel.
+       Determine new bounds as more channels are configured. */
     if (AutoSamplingConfig.NofChannels == 0)
     {
         AutoSamplingConfig.FirstChannel = Channel;
@@ -209,7 +202,6 @@ void ADC_ConfigureAutoSampling(const U8 Channel)
         if (Channel < AutoSamplingConfig.FirstChannel)
         {
             AutoSamplingConfig.FirstChannel = Channel;
-            AutoSamplingConfig.ActiveChannel = Channel;
         }
         else { }
 
@@ -226,18 +218,25 @@ void ADC_ConfigureAutoSampling(const U8 Channel)
 
 void ADC_StartAutoSampling(void)
 {
+    /* First start enables interrupts. */
     if (AutoSamplingConfig.Status == AUTO_SAMPLING_STATUS_IDLE)
     {
         ISR_AddInterruptHandler(ADC_ConversionCompleteInterruptHandler, INTERRUPT_VECTOR_ADC);
     }
+
+    /* Set status to running and reset sampling sequence. */
     AutoSamplingConfig.Status = AUTO_SAMPLING_STATUS_RUNNING;
-    ADC_Read(ADC_Channels[AutoSamplingConfig.FirstChannel].ChannelNum);
+    AutoSamplingConfig.ActiveChannel = AutoSamplingConfig.FirstChannel;
+    AutoSamplingConfig.NofSamples = 0;
+
+    /* Start sampling of first channel in configured sequence. */
+    ADC_Read(AutoSamplingConfig.FirstChannel);
 }
 
-void ADC_StopAutoSampling(void)
-{
+// void ADC_StopAutoSampling(void)
+// {
 
-}
+// }
 
 U16 ADC_GetLastSample(const U8 Channel)
 {
