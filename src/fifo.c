@@ -83,6 +83,11 @@ U8 Fifo_GetNofAvailable(const FifoType* Fifo)
     return (Fifo->Length - Fifo->NofItems);
 }
 
+U8 Fifo_GetNofItems(const FifoType* Fifo)
+{
+    return Fifo->NofItems;
+}
+
 
 
 

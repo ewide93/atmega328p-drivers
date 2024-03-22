@@ -47,5 +47,6 @@ void Fifo_ReadByte(FifoType* Fifo, U8* Data);
 BOOL Fifo_Empty(const FifoType* Fifo);
 BOOL Fifo_Full(const FifoType* Fifo);
 U8 Fifo_GetNofAvailable(const FifoType* Fifo);
+U8 Fifo_GetNofItems(const FifoType* Fifo);
 
 #endif // _FIFO_H_

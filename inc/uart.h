@@ -14,9 +14,14 @@
 //==================================================================================================
 #include "types.h"
 #include "hw_cfg.h"
+#include "communication_cfg.h"
 #include "isr.h"
 #include "fifo.h"
 #include "register_macros.h"
+
+#if defined(PROTOCOL_INTERFACE_UART)
+#include "protocol.h"
+#endif
 
 //==================================================================================================
 // Preprocessor definitions

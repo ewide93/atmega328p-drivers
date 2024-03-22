@@ -24,10 +24,5 @@ U8 LRC_Calc(const U8* Data, const U8 Length)
     return ((0xFF - LRC) + 1);
 }
 
-U8 LRC_CalcPDU(const PDUType* PDU)
-{
-    return LRC_Calc((U8*)PDU, 7);
-}
-
 
 
