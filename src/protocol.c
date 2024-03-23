@@ -2,7 +2,7 @@
 //
 // File name: protocol.c
 //
-// Purpose:
+// Purpose: Implementation of a messaging protocol over UART.
 //
 //==================================================================================================
 
@@ -11,6 +11,7 @@
 // Include directives
 //==================================================================================================
 #include "protocol.h"
+#include "digital.h"
 
 //==================================================================================================
 // Local preprocessor definitions
@@ -51,7 +52,7 @@ void Protocol_AssemblePDU(FifoType* Data)
     {
         Fifo_ReadByte(Data, &RxPDU.Data[i]);
     }
-    RxPDU.LRC = Protocol_CalcLRC(&RxPDU);
+    Fifo_ReadByte(Data, &RxPDU.LRC);
     MessageReady = TRUE;
 }
 
@@ -59,10 +60,25 @@ void Protocol_MessageRecievedEvent(void)
 {
     if (MessageReady)
     {
+        (void)Protocol_CalcLRC(&RxPDU);
         switch (RxPDU.FunctionCode)
         {
             case FUNC_CODE_TEST:
             {
+                if (RxPDU.Data[0] == 4U)
+                {
+                    Digital_TogglePin(Pin4);
+                    Protocol_SendACK();
+                }
+                else if (RxPDU.Data[0] == 5U)
+                {
+                    Digital_TogglePin(Pin5);
+                    Protocol_SendACK();
+                }
+                else
+                {
+                    Protocol_SendNACK();
+                }
                 break;
             }
             default:
@@ -72,6 +88,16 @@ void Protocol_MessageRecievedEvent(void)
         }
     }
     MessageReady = FALSE;
+}
+
+void Protocol_SendACK(void)
+{
+    UART_WriteByte(PROTOCOL_ACK);
+}
+
+void Protocol_SendNACK(void)
+{
+    UART_WriteByte(PROTOCOL_NACK);
 }
 
 

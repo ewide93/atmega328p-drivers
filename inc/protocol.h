@@ -2,7 +2,7 @@
 //
 // File name: protocol.h
 //
-// Purpose: Implementation of a simple messaging protocol.
+// Purpose: Implementation of a messaging protocol over UART.
 //
 //==================================================================================================
 #ifndef _PROTOCOL_H_
@@ -15,6 +15,7 @@
 #include "types.h"
 #include "fifo.h"
 #include "lrc.h"
+#include "uart.h"
 
 //==================================================================================================
 // Preprocessor definitions
@@ -23,6 +24,9 @@
 #define PROTOCOL_PAYLOAD_SIZE   (6U)
 #define PROTOCOL_LRC_SIZE       (1U)
 #define PROTOCOL_PDU_SIZE       ((U8)(PROTOCOL_FUNC_CODE_SIZE + PROTOCOL_PAYLOAD_SIZE + PROTOCOL_LRC_SIZE))
+
+#define PROTOCOL_ACK            (0x55U)
+#define PROTOCOL_NACK           (0xAAU)
 
 //==================================================================================================
 // Structures and enumerations
@@ -49,5 +53,7 @@ typedef enum
 //==================================================================================================
 void Protocol_AssemblePDU(FifoType* Data);
 void Protocol_MessageRecievedEvent(void);
+void Protocol_SendACK(void);
+void Protocol_SendNACK(void);
 
 #endif // _PROTOCOL_H_

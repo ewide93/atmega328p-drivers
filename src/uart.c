@@ -78,13 +78,11 @@ static void UART_RxCompleteInterruptHandler(void)
     const U8 RxData = UDR0;
     Fifo_WriteByte(&RxFifo, RxData);
 
-    #if defined(PROTOCOL_INTERFACE_UART)
-        if (Fifo_GetNofItems(&RxFifo) >= PROTOCOL_PDU_SIZE)
-        {
-            Protocol_AssemblePDU(&RxFifo);
-            Protocol_MessageRecievedEvent();
-        }
-    #endif
+    if (Fifo_GetNofItems(&RxFifo) >= PROTOCOL_PDU_SIZE)
+    {
+        Protocol_AssemblePDU(&RxFifo);
+        Protocol_MessageRecievedEvent();
+    }
 }
 
 
