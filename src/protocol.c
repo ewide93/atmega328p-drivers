@@ -58,35 +58,42 @@ void Protocol_AssemblePDU(FifoType* Data)
 
 void Protocol_MessageRecievedEvent(void)
 {
-    if (MessageReady)
+    U8 LRC = 0;
+    if (!MessageReady) return;
+
+    switch (RxPDU.FunctionCode)
     {
-        (void)Protocol_CalcLRC(&RxPDU);
-        switch (RxPDU.FunctionCode)
+        case FUNC_CODE_TEST:
         {
-            case FUNC_CODE_TEST:
+            LRC = Protocol_CalcLRC(&RxPDU);
+            if (LRC != RxPDU.LRC)
             {
-                if (RxPDU.Data[0] == 4U)
-                {
-                    Digital_TogglePin(Pin4);
-                    Protocol_SendACK();
-                }
-                else if (RxPDU.Data[0] == 5U)
-                {
-                    Digital_TogglePin(Pin5);
-                    Protocol_SendACK();
-                }
-                else
-                {
-                    Protocol_SendNACK();
-                }
+                Protocol_SendNACK();
                 break;
             }
-            default:
+
+            if (RxPDU.Data[0] == 4U)
             {
-                break;
+                Digital_TogglePin(Pin4);
+                Protocol_SendACK();
             }
+            else if (RxPDU.Data[0] == 5U)
+            {
+                Digital_TogglePin(Pin5);
+                Protocol_SendACK();
+            }
+            else
+            {
+                Protocol_SendNACK();
+            }
+            break;
+        }
+        default:
+        {
+            break;
         }
     }
+
     MessageReady = FALSE;
 }
 
