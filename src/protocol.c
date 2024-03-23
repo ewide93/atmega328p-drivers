@@ -90,6 +90,7 @@ void Protocol_MessageRecievedEvent(void)
         }
         default:
         {
+            Protocol_SendNACK();
             break;
         }
     }

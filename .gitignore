@@ -58,5 +58,8 @@ dkms.conf
 # Virtual enivronments
 .venv/
 
+# Ruff
+.ruff_cache/
+
 # Cppcheck cache
 build/cppcheck_cache/*
