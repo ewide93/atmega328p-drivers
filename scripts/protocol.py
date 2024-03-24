@@ -112,8 +112,12 @@ class ProtocolHandler:
 
         # Await and handle response.
         self._state = ProtocolState.AWAITING_RESPONSE
-        response_raw = self._serial.read()
+        # self._serial.reset_input_buffer()
+        # while self._serial.in_waiting < response_size:
+        #     time.sleep(0.001)
+        response_raw = self._serial.read(response_size)
         try:
+            # TODO: Handle responses containing data.
             response = struct.unpack(response_fmt, response_raw)[response_size - 1]
             self._handle_response(response, trace=trace)
         except struct.error:
@@ -136,10 +140,14 @@ class ProtocolHandler:
 
 
 def main() -> None:
-    uart_cfg = UARTConfig("COM3", 115200, 8, "N", 1, 2.5)
+    uart_cfg = UARTConfig("COM3", 9600, 8, "N", 1, 0.3)
     uart = ProtocolHandler(uart_cfg)
     uart.connect()
-    uart.send(FunctionCode.TEST, [0x05], trace=True)
+    for _ in range(10):
+        uart.send(FunctionCode.TEST, [0x04], trace=True)
+        time.sleep(0.1)
+        uart.send(FunctionCode.TEST, [0x05], trace=True)
+        time.sleep(0.1)
     uart.disconnect()
 
 

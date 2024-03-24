@@ -27,45 +27,13 @@ typedef enum IOMode
     IO_MODE_OUTPUT
 } IOModeEnum;
 
-typedef struct IOPortType
-{
-    volatile uint8_t InputPinReg;
-    volatile uint8_t DataDirReg;
-    volatile uint8_t DataReg;
-} IOPortType;
-
-typedef struct PinType
-{
-    IOPortType* IOPort;
-    uint8_t PinNum;
-} PinType;
-
-
-//==================================================================================================
-// External variables
-//==================================================================================================
-extern PinType* Pin2;
-extern PinType* Pin3;
-extern PinType* Pin4;
-extern PinType* Pin5;
-extern PinType* Pin6;
-extern PinType* Pin7;
-extern PinType* Pin8;
-extern PinType* Pin9;
-extern PinType* Pin10;
-extern PinType* Pin11;
-extern PinType* Pin12;
-extern PinType* Pin13;
-
-
 //==================================================================================================
 // Function prototypes.
 //==================================================================================================
-void Digital_PinInit(PinType* Pin, IOModeEnum Mode);
-void Digital_SetPin(PinType* Pin);
-void Digital_ClearPin(PinType* Pin);
-void Digital_TogglePin(PinType* Pin);
-bool Digital_ReadPin(PinType* Pin);
-
+void Digital_PinInit(const U8 Pin, const IOModeEnum Mode);
+void Digital_SetPin(const U8 Pin);
+void Digital_ClearPin(const U8 Pin);
+void Digital_TogglePin(const U8 Pin);
+BOOL Digital_ReadPin(const U8 Pin);
 
 #endif // _DIGITAL_H_

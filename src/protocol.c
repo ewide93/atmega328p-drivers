@@ -62,8 +62,8 @@ void Protocol_MessageRecievedEvent(const PDUType* PDU)
     if (!MessageReady) return;
 
     /* Prepare hardware for response transmission. */
-    UART_RxDisable();
-    UART_TxEnable();
+    // UART_RxDisable();
+    // UART_TxEnable();
 
     /* Calculate & compare LRC checksums. */
     MatchingLRC = (PDU->LRC == Protocol_CalcLRC(PDU));
@@ -80,22 +80,8 @@ void Protocol_MessageRecievedEvent(const PDUType* PDU)
             {
 
                 U8 Payload = PDU->Data[0];
-                if (Payload == 0x04)
-                {
-                    Digital_TogglePin(Pin4);
-                    Protocol_SendACK();
-                }
-                else if (Payload == 0x05)
-                {
-                    Digital_TogglePin(Pin5);
-                    Protocol_SendACK();
-                }
-                else
-                {
-                    /* Debug LED */
-                    Digital_SetPin(Pin6);
-                    Protocol_SendNACK();
-                }
+                Digital_TogglePin(Payload);
+                Protocol_SendACK();
                 break;
             }
             default:
@@ -107,8 +93,8 @@ void Protocol_MessageRecievedEvent(const PDUType* PDU)
     }
 
     /* Prepare hardware for message reception. */
-    UART_TxDisable();
-    UART_RxEnable();
+    // UART_TxDisable();
+    // UART_RxEnable();
     MessageReady = FALSE;
 }
 

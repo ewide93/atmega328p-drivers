@@ -108,8 +108,9 @@ void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 B
     ISR_AddInterruptHandler(UART_TxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_TX);
     ISR_AddInterruptHandler(UART_RxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_RX);
 
-    /* Enable reciever hardware. */
+    /* Enable transmitter & reciever hardware. */
     UART_RxEnable();
+    UART_TxEnable();
 
     UART_Initialized = TRUE;
 }

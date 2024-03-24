@@ -87,9 +87,9 @@ int main(void)
 
 static inline void Setup(void)
 {
-    Digital_PinInit(Pin4, IO_MODE_OUTPUT);
-    Digital_PinInit(Pin5, IO_MODE_OUTPUT);
-    Digital_PinInit(Pin6, IO_MODE_OUTPUT);
+    Digital_PinInit(4, IO_MODE_OUTPUT);
+    Digital_PinInit(5, IO_MODE_OUTPUT);
+    Digital_PinInit(6, IO_MODE_OUTPUT);
 
     // Timer_Init(Timer0Handle, &Timer0Cfg, TIMER0_ID);
     // ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPA);
@@ -100,7 +100,7 @@ static inline void Setup(void)
     // ADC_ConfigureAutoSampling(ADC_CHANNEL_3);
     // ISR_ADC_InterruptEnable();
 
-    UART_Init(UART_DATA_BITS_8, UART_PARITY_NONE, UART_STOP_BITS_1, UART_BAUD_RATE_115200);
+    UART_Init(UART_DATA_BITS_8, UART_PARITY_NONE, UART_STOP_BITS_1, UART_BAUD_RATE_9600);
     ISR_UART_TxInterruptEnable();
     ISR_UART_RxInterruptEnable();
 

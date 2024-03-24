@@ -7,12 +7,10 @@
 //
 //==================================================================================================
 
-
 //==================================================================================================
 // Include directives.
 //==================================================================================================
 #include "digital.h"
-
 
 //==================================================================================================
 // Local macro definitions.
@@ -20,83 +18,110 @@
 #define IO_PORT_B_ADDRESS ((IOPortType*)0x23U)
 #define IO_PORT_C_ADDRESS ((IOPortType*)0x26U)
 #define IO_PORT_D_ADDRESS ((IOPortType*)0x29U)
-#define PIN_NUM_MAX       (7U)
-
-
-//==================================================================================================
-// Definition of external variables
-//==================================================================================================
-static PinType Pin2_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 2 };
-PinType* Pin2 = &Pin2_Local;
-
-static PinType Pin3_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 3 };
-PinType* Pin3 = &Pin3_Local;
-
-static PinType Pin4_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 4 };
-PinType* Pin4 = &Pin4_Local;
-
-static PinType Pin5_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 5 };
-PinType* Pin5 = &Pin5_Local;
-
-static PinType Pin6_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 6 };
-PinType* Pin6 = &Pin6_Local;
-
-static PinType Pin7_Local = { .IOPort = IO_PORT_D_ADDRESS, .PinNum = 7 };
-PinType* Pin7 = &Pin7_Local;
-
-static PinType Pin8_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 0 };
-PinType* Pin8 = &Pin8_Local;
-
-static PinType Pin9_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 1 };
-PinType* Pin9 = &Pin9_Local;
-
-static PinType Pin10_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 2 };
-PinType* Pin10 = &Pin10_Local;
-
-static PinType Pin11_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 3 };
-PinType* Pin11 = &Pin11_Local;
-
-static PinType Pin12_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 4 };
-PinType* Pin12 = &Pin12_Local;
-
-static PinType Pin13_Local = { .IOPort = IO_PORT_B_ADDRESS, .PinNum = 5 };
-PinType* Pin13 = &Pin13_Local;
-
+#define PIN_ARRAY_OFFSET  (2U)
 
 //==================================================================================================
-// Function definitions.
+// Structures and enumerations
 //==================================================================================================
-void Digital_PinInit(PinType* Pin, IOModeEnum Mode)
+typedef struct
 {
-    if (Pin->PinNum > PIN_NUM_MAX) return;
-    if (Pin->IOPort == IO_PORT_C_ADDRESS && Pin->PinNum > (PIN_NUM_MAX - 1)) return;
+    volatile uint8_t InputPinReg;
+    volatile uint8_t DataDirReg;
+    volatile uint8_t DataReg;
+} IOPortType;
+
+typedef struct
+{
+    IOPortType* Port;
+    const U8 Shift;
+} PinType;
+
+
+//==================================================================================================
+// Local variables
+//==================================================================================================
+static PinType Pins[12] =
+{
+    {.Port = IO_PORT_D_ADDRESS, .Shift = 2},        /* Pin 2 */
+    {.Port = IO_PORT_D_ADDRESS, .Shift = 3},        /* Pin 3 */
+    {.Port = IO_PORT_D_ADDRESS, .Shift = 4},        /* Pin 4 */
+    {.Port = IO_PORT_D_ADDRESS, .Shift = 5},        /* Pin 5 */
+    {.Port = IO_PORT_D_ADDRESS, .Shift = 6},        /* Pin 6 */
+    {.Port = IO_PORT_D_ADDRESS, .Shift = 7},        /* Pin 7 */
+    {.Port = IO_PORT_B_ADDRESS, .Shift = 0},        /* Pin 8 */
+    {.Port = IO_PORT_B_ADDRESS, .Shift = 1},        /* Pin 9 */
+    {.Port = IO_PORT_B_ADDRESS, .Shift = 2},        /* Pin 10 */
+    {.Port = IO_PORT_B_ADDRESS, .Shift = 3},        /* Pin 11 */
+    {.Port = IO_PORT_B_ADDRESS, .Shift = 4},        /* Pin 12 */
+    {.Port = IO_PORT_B_ADDRESS, .Shift = 5},        /* Pin 13 */
+
+};
+
+//==================================================================================================
+// Local function definitions.
+//==================================================================================================
+static inline BOOL Digital_PinValid(const U8 Pin)
+{
+    return (Pin >= 2 && Pin <= 13);
+}
+
+//==================================================================================================
+// External function definitions.
+//==================================================================================================
+void Digital_PinInit(const U8 Pin, const IOModeEnum Mode)
+{
+    if (!Digital_PinValid(Pin)) return;
 
     switch (Mode)
     {
-        case IO_MODE_INPUT: { break; }
-        case IO_MODE_INPUT_PULLUP: { Pin->IOPort->DataReg |= (1 << Pin->PinNum); break; }
-        case IO_MODE_OUTPUT: { Pin->IOPort->DataDirReg |= (1 << Pin->PinNum); break; }
+        case IO_MODE_INPUT:
+        {
+            break;
+        }
+        case IO_MODE_INPUT_PULLUP:
+        {
+            Pins[Pin - PIN_ARRAY_OFFSET].Port->DataReg |= (1 << Pins[Pin - PIN_ARRAY_OFFSET].Shift);
+            break;
+        }
+        case IO_MODE_OUTPUT:
+        {
+            Pins[Pin - PIN_ARRAY_OFFSET].Port->DataDirReg |= (1 << Pins[Pin - PIN_ARRAY_OFFSET].Shift);
+            break;
+        }
         default: { break; }
     }
 }
 
-void Digital_SetPin(PinType* Pin)
+void Digital_SetPin(const U8 Pin)
 {
-    Pin->IOPort->DataReg |= (1 << Pin->PinNum);
+    if (Digital_PinValid(Pin))
+    {
+        Pins[Pin - PIN_ARRAY_OFFSET].Port->DataReg |= (1 << Pins[Pin - PIN_ARRAY_OFFSET].Shift);
+    }
 }
 
-void Digital_ClearPin(PinType* Pin)
+void Digital_ClearPin(const U8 Pin)
 {
-    Pin->IOPort->DataReg &= ~(1 << Pin->PinNum);
+    if (Digital_PinValid(Pin))
+    {
+        Pins[Pin - PIN_ARRAY_OFFSET].Port->DataReg &= ~(1 << Pins[Pin - PIN_ARRAY_OFFSET].Shift);
+    }
 }
 
-void Digital_TogglePin(PinType* Pin)
+void Digital_TogglePin(const U8 Pin)
 {
-    Pin->IOPort->DataReg ^= (1 << Pin->PinNum);
+    if (Digital_PinValid(Pin))
+    {
+        Pins[Pin - PIN_ARRAY_OFFSET].Port->DataReg ^= (1 << Pins[Pin - PIN_ARRAY_OFFSET].Shift);
+    }
 }
 
-bool Digital_ReadPin(PinType* Pin)
+BOOL Digital_ReadPin(const U8 Pin)
 {
-    return Pin->IOPort->InputPinReg & (1 << Pin->PinNum);
+    if (Digital_PinValid(Pin))
+    {
+        return (Pins[Pin - PIN_ARRAY_OFFSET].Port->InputPinReg & (1 << Pins[Pin - PIN_ARRAY_OFFSET].Shift));
+    }
+    else return FALSE;
 }
 
