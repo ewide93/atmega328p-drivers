@@ -36,8 +36,6 @@ class UARTConfig(NamedTuple):
 
 
 class ProtocolHandler:
-    RETRANSMIT_CNT_MAX = 5
-
     def __init__(self, uart_cfg: UARTConfig) -> None:
         self._state = ProtocolState.PORT_CLOSED
         self._port = uart_cfg.port
@@ -49,6 +47,7 @@ class ProtocolHandler:
         self._serial = None
         self._current_pdu = None
         self._retransmit_cnt = 0
+        self._retransmit_cnt_max = 5
         self._retransmit_delay = 0.1
 
     def connect(self) -> None:
@@ -80,62 +79,70 @@ class ProtocolHandler:
         pdu[7] = self._calc_lrc(pdu[0:7])
         return pdu
 
-    def _handle_response(self, response: Response) -> None:
+    def _handle_response(self, response: Response, *, trace: bool = False) -> None:
         match response:
             case Response.ACK:
-                print("ACK Recieved")
+                if trace:
+                    print("ACK Recieved")
             case Response.NACK:
-                self._retransmit()
+                if trace:
+                    print("NACK Recieved")
+                self._retransmit(trace=trace)
             case _:
                 print(f"Invalid response recieved: {hex(response)}")
 
-    def send(self, func_code: FunctionCode, data: List[int]) -> None:
+    def send(
+        self,
+        func_code: FunctionCode,
+        data: List[int],
+        response_fmt: str = "<B",
+        response_size: int = 1,
+        *,
+        trace: bool = False,
+        retransmission: bool = False,
+    ) -> None:
+        # Send message.
         self._state = ProtocolState.TRANSMITTING
-        pdu = self._assemble_pdu(func_code, data)
-        print(f"Sending PDU: {[hex(byte) for byte in pdu]}")
-        self._current_pdu = pdu
-        self._serial.write(pdu)
+        if not retransmission:
+            pdu = self._assemble_pdu(func_code, data)
+            self._current_pdu = pdu
+        if trace:
+            print(f"Sending PDU: {[hex(byte) for byte in self._current_pdu]}")
+        for byte in self._current_pdu:
+            if trace:
+                print(f"Sending byte: {hex(byte)}")
+            self._serial.write(byte)
 
+        # Await and handle response.
         self._state = ProtocolState.AWAITING_RESPONSE
         response_raw = self._serial.read()
         try:
-            response = struct.unpack("<B", response_raw)[0]
-            self._handle_response(response)
+            response = struct.unpack(response_fmt, response_raw)[response_size - 1]
+            self._handle_response(response, trace=trace)
         except struct.error:
             print(f"No response from {self._port}")
+
+        # Return to idle state, reset retransmission variables.
         self._state = ProtocolState.IDLE
         self._current_pdu = None
+        self._retransmit_cnt = 0
 
-    def _retransmit(self) -> None:
-        if self._retransmit_cnt < self.RETRANSMIT_CNT_MAX:
+    def _retransmit(self, *, trace: bool = False) -> None:
+        if self._retransmit_cnt < self._retransmit_cnt_max:
             time.sleep(self._retransmit_delay)
-            self._state = ProtocolState.TRANSMITTING
-            print(f"Retransmitting PDU: {[hex(byte) for byte in self._current_pdu]}")
             self._retransmit_cnt += 1
-            print(f"Retransmit counter: {self._retransmit_cnt}")
-            self._serial.write(self._current_pdu)
-
-            self._state = ProtocolState.AWAITING_RESPONSE
-            response_raw = self._serial.read()
-            try:
-                response = struct.unpack("<B", response_raw)[0]
-                self._handle_response(response)
-            except struct.error:
-                print(f"No response from {self._port}")
-            self._state = ProtocolState.IDLE
-            self._current_pdu = None
+            self.send(None, None, trace=trace, retransmission=True)
         else:
-            print(f"Max number of retransmissions({self.RETRANSMIT_CNT_MAX}) reached.")
+            print(f"Retransmission limit ({self._retransmit_cnt_max}) reached.")
             self.disconnect()
             sys.exit(-1)
-
 
 
 def main() -> None:
     uart_cfg = UARTConfig("COM3", 115200, 8, "N", 1, 2.5)
     uart = ProtocolHandler(uart_cfg)
     uart.connect()
-    uart.send(FunctionCode.TEST, [0x05])
+    uart.send(FunctionCode.TEST, [0x05], trace=True)
     uart.disconnect()
 
 
