@@ -8,7 +8,7 @@ from typing import NamedTuple, List
 
 
 class FunctionCode(IntEnum):
-    TEST = 0x00
+    TEST = 0x20
     DIGITAL_SET_PIN = 0x10
     DIGITAL_CLEAR_PIN = 0x11
     DIGITAL_TOGGLE_PIN = 0x12
@@ -108,10 +108,7 @@ class ProtocolHandler:
             self._current_pdu = pdu
         if trace:
             print(f"Sending PDU: {[hex(byte) for byte in self._current_pdu]}")
-        for byte in self._current_pdu:
-            if trace:
-                print(f"Sending byte: {hex(byte)}")
-            self._serial.write(byte)
+        self._serial.write(self._current_pdu)
 
         # Await and handle response.
         self._state = ProtocolState.AWAITING_RESPONSE

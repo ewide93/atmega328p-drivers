@@ -21,7 +21,6 @@
 //==================================================================================================
 // Local variables
 //==================================================================================================
-static PDUType RxPDU = { 0 };
 static BOOL MessageReady = FALSE;
 
 //==================================================================================================
@@ -45,56 +44,71 @@ static U8 Protocol_CalcLRC(const PDUType* PDU)
 //==================================================================================================
 // External function definitions
 //==================================================================================================
-void Protocol_AssemblePDU(FifoType* Data)
+void Protocol_AssemblePDU(FifoType* Fifo, PDUType* PDU)
 {
-    Fifo_ReadByte(Data, &RxPDU.FunctionCode);
+    Fifo_ReadByte(Fifo, &PDU->FunctionCode);
     for (U8 i = 0; i < PROTOCOL_PAYLOAD_SIZE; i++)
     {
-        Fifo_ReadByte(Data, &RxPDU.Data[i]);
+        Fifo_ReadByte(Fifo, &PDU->Data[i]);
     }
-    Fifo_ReadByte(Data, &RxPDU.LRC);
+    Fifo_ReadByte(Fifo, &PDU->LRC);
     MessageReady = TRUE;
 }
 
-void Protocol_MessageRecievedEvent(void)
+void Protocol_MessageRecievedEvent(const PDUType* PDU)
 {
-    U8 LRC = 0;
+    BOOL MatchingLRC = FALSE;
+
     if (!MessageReady) return;
 
-    switch (RxPDU.FunctionCode)
+    /* Prepare hardware for response transmission. */
+    UART_RxDisable();
+    UART_TxEnable();
+
+    /* Calculate & compare LRC checksums. */
+    MatchingLRC = (PDU->LRC == Protocol_CalcLRC(PDU));
+    if (!MatchingLRC)
     {
-        case FUNC_CODE_TEST:
+        Protocol_SendNACK();
+    }
+    else
+    {
+        /* TODO: Find more elegant solution to handle different mesages. */
+        switch (PDU->FunctionCode)
         {
-            LRC = Protocol_CalcLRC(&RxPDU);
-            if (LRC != RxPDU.LRC)
+            case FUNC_CODE_TEST:
+            {
+
+                U8 Payload = PDU->Data[0];
+                if (Payload == 0x04)
+                {
+                    Digital_TogglePin(Pin4);
+                    Protocol_SendACK();
+                }
+                else if (Payload == 0x05)
+                {
+                    Digital_TogglePin(Pin5);
+                    Protocol_SendACK();
+                }
+                else
+                {
+                    /* Debug LED */
+                    Digital_SetPin(Pin6);
+                    Protocol_SendNACK();
+                }
+                break;
+            }
+            default:
             {
                 Protocol_SendNACK();
                 break;
             }
-
-            if (RxPDU.Data[0] == 4U)
-            {
-                Digital_TogglePin(Pin4);
-                Protocol_SendACK();
-            }
-            else if (RxPDU.Data[0] == 5U)
-            {
-                Digital_TogglePin(Pin5);
-                Protocol_SendACK();
-            }
-            else
-            {
-                Protocol_SendNACK();
-            }
-            break;
-        }
-        default:
-        {
-            Protocol_SendNACK();
-            break;
         }
     }
 
+    /* Prepare hardware for message reception. */
+    UART_TxDisable();
+    UART_RxEnable();
     MessageReady = FALSE;
 }
 

@@ -89,6 +89,7 @@ static inline void Setup(void)
 {
     Digital_PinInit(Pin4, IO_MODE_OUTPUT);
     Digital_PinInit(Pin5, IO_MODE_OUTPUT);
+    Digital_PinInit(Pin6, IO_MODE_OUTPUT);
 
     // Timer_Init(Timer0Handle, &Timer0Cfg, TIMER0_ID);
     // ISR_TimerInterruptEnable(Timer0Handle, TIM_INT_COMPA);

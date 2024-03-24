@@ -40,7 +40,7 @@ typedef struct
 
 typedef enum
 {
-    FUNC_CODE_TEST = 0x00,
+    FUNC_CODE_TEST = 0x20,
 } FunctionCodeEnum;
 
 //==================================================================================================
@@ -51,8 +51,8 @@ typedef enum
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
-void Protocol_AssemblePDU(FifoType* Data);
-void Protocol_MessageRecievedEvent(void);
+void Protocol_AssemblePDU(FifoType* Fifo, PDUType* PDU);
+void Protocol_MessageRecievedEvent(const PDUType* PDU);
 void Protocol_SendACK(void);
 void Protocol_SendNACK(void);
 
