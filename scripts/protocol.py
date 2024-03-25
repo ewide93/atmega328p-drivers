@@ -1,5 +1,4 @@
 from serial import Serial
-import serial
 import struct
 import time
 import sys
@@ -112,9 +111,6 @@ class ProtocolHandler:
 
         # Await and handle response.
         self._state = ProtocolState.AWAITING_RESPONSE
-        # self._serial.reset_input_buffer()
-        # while self._serial.in_waiting < response_size:
-        #     time.sleep(0.001)
         response_raw = self._serial.read(response_size)
         try:
             # TODO: Handle responses containing data.

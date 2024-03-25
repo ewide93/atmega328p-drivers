@@ -80,9 +80,8 @@ static void UART_RxCompleteInterruptHandler(void)
 
     if (Fifo_GetNofItems(&RxFifo) >= PROTOCOL_PDU_SIZE)
     {
-        PDUType RxPDU;
-        Protocol_AssemblePDU(&RxFifo, &RxPDU);
-        Protocol_MessageRecievedEvent(&RxPDU);
+        /* Assemble PDU. */
+        Protocol_AssemblePDU(&RxFifo, Protocol_GetPDUPtr());
     }
 }
 

@@ -16,6 +16,7 @@
 #include "fifo.h"
 #include "lrc.h"
 #include "uart.h"
+#include "fsm.h"
 
 //==================================================================================================
 // Preprocessor definitions
@@ -43,6 +44,14 @@ typedef enum
     FUNC_CODE_TEST = 0x20,
 } FunctionCodeEnum;
 
+typedef enum
+{
+    PROTOCOL_STATE_NONE,
+    PROTOCOL_STATE_RX,
+    PROTOCOL_STATE_TX,
+    PROTOCOL_STATE_ERROR
+} ProtocolStateEnum;
+
 //==================================================================================================
 // External variable declarations
 //==================================================================================================
@@ -51,6 +60,9 @@ typedef enum
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
+void Protocol_Init(void);
+void Protocol_Run(void);
+PDUType* Protocol_GetPDUPtr(void);
 void Protocol_AssemblePDU(FifoType* Fifo, PDUType* PDU);
 void Protocol_MessageRecievedEvent(const PDUType* PDU);
 void Protocol_SendACK(void);
