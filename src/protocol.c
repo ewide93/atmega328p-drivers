@@ -46,23 +46,43 @@ static ProtocolHandlerType Protocol;
 //==================================================================================================
 // Local function definitions
 //==================================================================================================
+/*
+ *  @brief Convenience function to calculate LRC checksum for a PDU.
+ *  @param PDU
+ *      Pointer to PDU for which a LRC is to be calculated.
+ *  @returns
+ */
 static U8 Protocol_CalcLRC(const PDUType* PDU)
 {
     return LRC_Calc((U8*)PDU, (U8)(PROTOCOL_PDU_SIZE - 1U));
 }
 
+/*
+ *  @brief Assemble a generic acknowledge response.
+ *  @param void
+ */
 static void Protocol_AssembleAckPDU(void)
 {
-    U8 DummyData[PROTOCOL_PAYLOAD_SIZE] = { 0 };
+    const U8 DummyData[PROTOCOL_PAYLOAD_SIZE] = { 0 };
     Protocol_AssembleTxPDU(&Protocol.TxPDU, PROTOCOL_ACK, DummyData);
 }
 
+/*
+ *  @brief Assemble a generic non-acknowledge response.
+ *  @param
+ *  @returns
+ */
 static void Protocol_AssembleNackPDU(void)
 {
-    U8 DummyData[PROTOCOL_PAYLOAD_SIZE] = { 0 };
+    const U8 DummyData[PROTOCOL_PAYLOAD_SIZE] = { 0 };
     Protocol_AssembleTxPDU(&Protocol.TxPDU, PROTOCOL_NACK, DummyData);
 }
 
+/*
+ *  @brief Handle incoming messages and prepare response PDU.
+ *  @param
+ *  @returns
+ */
 static void Protocol_HandleMessage(void)
 {
     /* TODO: Find more elegant solution to handle different messages. */
@@ -83,9 +103,15 @@ static void Protocol_HandleMessage(void)
     }
 }
 
+/*
+ *  @brief Load UART transmit buffer with a prepared response PDU.
+ *  @param PDU
+ *      Response PDU.
+ *  @returns
+ */
 static void Protocol_SendResponse(const PDUType* PDU)
 {
-    U8* PDUPtr = (U8*)PDU;
+    const U8* PDUPtr = (U8*)PDU;
     for (U8 i = 0; i < PROTOCOL_PDU_SIZE; i++)
     {
         UART_WriteByte(*PDUPtr + i);
@@ -95,6 +121,11 @@ static void Protocol_SendResponse(const PDUType* PDU)
 //==================================================================================================
 // External function definitions
 //==================================================================================================
+/*
+ *  @brief Initialization of protocol state & data structures.
+ *  @param
+ *  @returns
+ */
 void Protocol_Init(void)
 {
     if (!Protocol.Initialized)
@@ -121,6 +152,11 @@ void Protocol_Init(void)
     }
 }
 
+/*
+ *  @brief Execute protocol FSM. Should be invoked periodically.
+ *  @param
+ *  @returns
+ */
 void Protocol_Run(void)
 {
     U8 State = FSM_GetCurrentState(&Protocol.State);
@@ -148,7 +184,6 @@ void Protocol_Run(void)
                 {
                     Protocol_HandleMessage();
                 }
-
                 Protocol_RxMessageHandledEvent();
             }
 
@@ -161,6 +196,7 @@ void Protocol_Run(void)
                 Protocol_SendResponse(&Protocol.TxPDU);
                 Protocol_TxMessageHandledEvent();
             }
+
             break;
         }
         case PROTOCOL_STATE_ERROR:
@@ -174,16 +210,34 @@ void Protocol_Run(void)
     }
 }
 
+/*
+ *  @brief Getter for internal message reception PDU structure.
+ *  @param
+ *  @returns
+ *      Pointer to message reception PDU structure.
+ */
 PDUType* Protocol_GetRxPDUPtr(void)
 {
     return &Protocol.RxPDU;
 }
 
+/*
+ *  @brief Getter for internal message transmission PDU structure.
+ *  @param
+ *  @returns
+ *      Pointer to message transmission PDU structure.
+ */
 PDUType* Protocol_GetTxPDUPtr(void)
 {
     return &Protocol.TxPDU;
 }
 
+/*
+ *  @brief Event signalling a message has been transmitted.
+ *  @note Called from UART interrupt context.
+ *  @param
+ *  @returns
+ */
 void Protocol_MessageTxEvent(void)
 {
     FSM_SetState(&Protocol.State, PROTOCOL_STATE_IDLE);
@@ -191,6 +245,12 @@ void Protocol_MessageTxEvent(void)
     UART_RxEnable();
 }
 
+/*
+ *  @brief Event signalling a message is ready to be handled.
+ *  @note Called from UART interrupt context.
+ *  @param
+ *  @returns
+ */
 void Protocol_MessageRxEvent(void)
 {
     FSM_SetState(&Protocol.State, PROTOCOL_STATE_RX);
@@ -198,6 +258,11 @@ void Protocol_MessageRxEvent(void)
     UART_RxDisable();
 }
 
+/*
+ *  @brief Event signalling a recieved message has been handled.
+ *  @param
+ *  @returns
+ */
 void Protocol_RxMessageHandledEvent(void)
 {
     FSM_SetState(&Protocol.State, PROTOCOL_STATE_TX);
@@ -206,13 +271,24 @@ void Protocol_RxMessageHandledEvent(void)
     UART_TxEnable();
 }
 
+/*
+ *  @brief Event signalling that the transmission of a message has been handled.
+ *  @param
+ *  @returns
+ */
 void Protocol_TxMessageHandledEvent(void)
 {
     Protocol.TxMessageReady = FALSE;
 }
 
-
-
+/*
+ *  @brief Assemble a sequence of recieved bytes into a PDU.
+ *  @param Fifo
+ *      Buffer containing raw data.
+ *  @param PDU
+ *      Pointer to PDU structure where the assembled PDU should be stored.
+ *  @returns
+ */
 void Protocol_AssembleRxPDU(FifoType* Fifo, PDUType* PDU)
 {
     Fifo_ReadByte(Fifo, &PDU->FunctionCode);
@@ -223,6 +299,16 @@ void Protocol_AssembleRxPDU(FifoType* Fifo, PDUType* PDU)
     Fifo_ReadByte(Fifo, &PDU->LRC);
 }
 
+/*
+ *  @brief Assemble a PDU for transmission.
+ *  @param PDU
+ *      Pointer to PDU structure where the assembled PDU should be stored.
+ *  @param FunctionCode
+ *      The function code for the PDU (First byte).
+ *  @param Data
+ *      Array containing PDU payload.
+ *  @returns
+ */
 void Protocol_AssembleTxPDU(PDUType* PDU, const U8 FunctionCode, const U8* Data)
 {
     PDU->FunctionCode = FunctionCode;
@@ -232,15 +318,3 @@ void Protocol_AssembleTxPDU(PDUType* PDU, const U8 FunctionCode, const U8* Data)
     }
     PDU->LRC = LRC_Calc((U8*)PDU, PROTOCOL_FUNC_CODE_SIZE + PROTOCOL_PAYLOAD_SIZE);
 }
-
-void Protocol_SendACK(void)
-{
-    UART_WriteByte(PROTOCOL_ACK);
-}
-
-void Protocol_SendNACK(void)
-{
-    UART_WriteByte(PROTOCOL_NACK);
-}
-
-

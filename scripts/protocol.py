@@ -136,7 +136,7 @@ class ProtocolHandler:
 
 
 def main() -> None:
-    uart_cfg = UARTConfig("COM3", 9600, 8, "N", 1, 0.3)
+    uart_cfg = UARTConfig("COM3", 19200, 8, "N", 1, 0.3)
     uart = ProtocolHandler(uart_cfg)
     uart.connect()
     for _ in range(10):
