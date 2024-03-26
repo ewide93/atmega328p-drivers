@@ -71,6 +71,10 @@ static void UART_TxCompleteInterruptHandler(void)
         Fifo_ReadByte(&TxFifo, &TxData);
         UDR0 = TxData;
     }
+    else
+    {
+        Protocol_MessageTxEvent();
+    }
 }
 
 static void UART_RxCompleteInterruptHandler(void)
@@ -80,8 +84,9 @@ static void UART_RxCompleteInterruptHandler(void)
 
     if (Fifo_GetNofItems(&RxFifo) >= PROTOCOL_PDU_SIZE)
     {
-        /* Assemble PDU. */
-        Protocol_AssemblePDU(&RxFifo, Protocol_GetPDUPtr());
+        /* Assemble PDU, signal event. */
+        Protocol_AssembleRxPDU(&RxFifo, Protocol_GetRxPDUPtr());
+        Protocol_MessageRxEvent();
     }
 }
 
@@ -107,10 +112,8 @@ void UART_Init(const U8 DataBits, const U8 Parity, const U8 StopBits, const U8 B
     ISR_AddInterruptHandler(UART_TxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_TX);
     ISR_AddInterruptHandler(UART_RxCompleteInterruptHandler, INTERRUPT_VECTOR_USART_RX);
 
-    /* Enable transmitter & reciever hardware. */
+    /* Enable reciever hardware. */
     UART_RxEnable();
-    UART_TxEnable();
-
     UART_Initialized = TRUE;
 }
 

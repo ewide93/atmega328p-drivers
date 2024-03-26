@@ -94,8 +94,8 @@ class ProtocolHandler:
         self,
         func_code: FunctionCode,
         data: List[int],
-        response_fmt: str = "<B",
-        response_size: int = 1,
+        response_fmt: str = "<8B",
+        response_size: int = 8,
         *,
         trace: bool = False,
         retransmission: bool = False,
@@ -114,8 +114,8 @@ class ProtocolHandler:
         response_raw = self._serial.read(response_size)
         try:
             # TODO: Handle responses containing data.
-            response = struct.unpack(response_fmt, response_raw)[response_size - 1]
-            self._handle_response(response, trace=trace)
+            response = struct.unpack(response_fmt, response_raw)
+            self._handle_response(response[0], trace=trace)
         except struct.error:
             print(f"No response from {self._port}")
 

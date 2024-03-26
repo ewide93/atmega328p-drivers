@@ -47,6 +47,7 @@ typedef enum
 typedef enum
 {
     PROTOCOL_STATE_NONE,
+    PROTOCOL_STATE_IDLE,
     PROTOCOL_STATE_RX,
     PROTOCOL_STATE_TX,
     PROTOCOL_STATE_ERROR
@@ -62,9 +63,14 @@ typedef enum
 //==================================================================================================
 void Protocol_Init(void);
 void Protocol_Run(void);
-PDUType* Protocol_GetPDUPtr(void);
-void Protocol_AssemblePDU(FifoType* Fifo, PDUType* PDU);
-void Protocol_MessageRecievedEvent(const PDUType* PDU);
+PDUType* Protocol_GetRxPDUPtr(void);
+PDUType* Protocol_GetTxPDUPtr(void);
+void Protocol_AssembleRxPDU(FifoType* Fifo, PDUType* PDU);
+void Protocol_AssembleTxPDU(PDUType* PDU, const U8 FunctionCode, const U8* Data);
+void Protocol_MessageRxEvent(void);
+void Protocol_MessageTxEvent(void);
+void Protocol_RxMessageHandledEvent(void);
+void Protocol_TxMessageHandledEvent(void);
 void Protocol_SendACK(void);
 void Protocol_SendNACK(void);
 

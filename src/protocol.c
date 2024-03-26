@@ -20,17 +20,22 @@
 // Local function prototypes
 //==================================================================================================
 static U8 Protocol_CalcLRC(const PDUType* PDU);
+static void Protocol_AssembleAckPDU(void);
+static void Protocol_AssembleNackPDU(void);
 static void Protocol_HandleMessage(void);
+static void Protocol_SendResponse(const PDUType* PDU);
 
 //==================================================================================================
 // Structures & enumerations.
 //==================================================================================================
 typedef struct
 {
-    PDUType PDU;
+    PDUType RxPDU;
+    PDUType TxPDU;
     FSMType State;
     BOOL Initialized;
-    BOOL MessageReady;
+    BOOL RxMessageReady;
+    BOOL TxMessageReady;
 } ProtocolHandlerType;
 
 //==================================================================================================
@@ -46,23 +51,44 @@ static U8 Protocol_CalcLRC(const PDUType* PDU)
     return LRC_Calc((U8*)PDU, (U8)(PROTOCOL_PDU_SIZE - 1U));
 }
 
+static void Protocol_AssembleAckPDU(void)
+{
+    U8 DummyData[PROTOCOL_PAYLOAD_SIZE] = { 0 };
+    Protocol_AssembleTxPDU(&Protocol.TxPDU, PROTOCOL_ACK, DummyData);
+}
+
+static void Protocol_AssembleNackPDU(void)
+{
+    U8 DummyData[PROTOCOL_PAYLOAD_SIZE] = { 0 };
+    Protocol_AssembleTxPDU(&Protocol.TxPDU, PROTOCOL_NACK, DummyData);
+}
+
 static void Protocol_HandleMessage(void)
 {
     /* TODO: Find more elegant solution to handle different messages. */
-    switch (Protocol.PDU.FunctionCode)
+    switch (Protocol.RxPDU.FunctionCode)
     {
         case FUNC_CODE_TEST:
         {
-            U8 Payload = Protocol.PDU.Data[0];
+            U8 Payload = Protocol.RxPDU.Data[0];
             Digital_TogglePin(Payload);
-            Protocol_SendACK();
+            Protocol_AssembleAckPDU();
             break;
         }
         default:
         {
-            Protocol_SendNACK();
+            Protocol_AssembleNackPDU();
             break;
         }
+    }
+}
+
+static void Protocol_SendResponse(const PDUType* PDU)
+{
+    U8* PDUPtr = (U8*)PDU;
+    for (U8 i = 0; i < PROTOCOL_PDU_SIZE; i++)
+    {
+        UART_WriteByte(*PDUPtr + i);
     }
 }
 
@@ -73,19 +99,24 @@ void Protocol_Init(void)
 {
     if (!Protocol.Initialized)
     {
-        /* Initialize PDU structure. */
-        Protocol.PDU.FunctionCode = 0;
+        /* Initialize PDU structures. */
+        Protocol.TxPDU.FunctionCode = 0;
+        Protocol.RxPDU.FunctionCode = 0;
+
         for (U8 i = 0; i < PROTOCOL_PAYLOAD_SIZE; i++)
         {
-            Protocol.PDU.Data[i] = 0;
+            Protocol.TxPDU.Data[i] = 0;
+            Protocol.RxPDU.Data[i] = 0;
         }
-        Protocol.PDU.LRC = 0;
+        Protocol.TxPDU.LRC = 0;
+        Protocol.RxPDU.LRC = 0;
 
         /* Initialize FSM structure. */
         FSM_Init(&Protocol.State);
 
         /* Initialize status booleans. */
-        Protocol.MessageReady = FALSE;
+        Protocol.TxMessageReady = FALSE;
+        Protocol.RxMessageReady = FALSE;
         Protocol.Initialized = TRUE;
     }
 }
@@ -100,27 +131,36 @@ void Protocol_Run(void)
         {
             break;
         }
+        case PROTOCOL_STATE_IDLE:
+        {
+            break;
+        }
         case PROTOCOL_STATE_RX:
         {
-            if (Protocol.MessageReady)
+            if (Protocol.RxMessageReady)
             {
                 /* Calculate & compare LRC checksums. */
-                if ( !(Protocol.PDU.LRC == Protocol_CalcLRC(&Protocol.PDU)) )
+                if ( !(Protocol.RxPDU.LRC == Protocol_CalcLRC(&Protocol.RxPDU)) )
                 {
-                    Protocol_SendNACK();
+                    Protocol_AssembleNackPDU();
                 }
                 else
                 {
                     Protocol_HandleMessage();
                 }
 
-                Protocol.MessageReady = FALSE;
+                Protocol_RxMessageHandledEvent();
             }
 
             break;
         }
         case PROTOCOL_STATE_TX:
         {
+            if (Protocol.TxMessageReady)
+            {
+                Protocol_SendResponse(&Protocol.TxPDU);
+                Protocol_TxMessageHandledEvent();
+            }
             break;
         }
         case PROTOCOL_STATE_ERROR:
@@ -134,12 +174,46 @@ void Protocol_Run(void)
     }
 }
 
-PDUType* Protocol_GetPDUPtr(void)
+PDUType* Protocol_GetRxPDUPtr(void)
 {
-    return &Protocol.PDU;
+    return &Protocol.RxPDU;
 }
 
-void Protocol_AssemblePDU(FifoType* Fifo, PDUType* PDU)
+PDUType* Protocol_GetTxPDUPtr(void)
+{
+    return &Protocol.TxPDU;
+}
+
+void Protocol_MessageTxEvent(void)
+{
+    FSM_SetState(&Protocol.State, PROTOCOL_STATE_IDLE);
+    UART_TxDisable();
+    UART_RxEnable();
+}
+
+void Protocol_MessageRxEvent(void)
+{
+    FSM_SetState(&Protocol.State, PROTOCOL_STATE_RX);
+    Protocol.RxMessageReady = TRUE;
+    UART_RxDisable();
+}
+
+void Protocol_RxMessageHandledEvent(void)
+{
+    FSM_SetState(&Protocol.State, PROTOCOL_STATE_TX);
+    Protocol.RxMessageReady = FALSE;
+    Protocol.TxMessageReady = TRUE;
+    UART_TxEnable();
+}
+
+void Protocol_TxMessageHandledEvent(void)
+{
+    Protocol.TxMessageReady = FALSE;
+}
+
+
+
+void Protocol_AssembleRxPDU(FifoType* Fifo, PDUType* PDU)
 {
     Fifo_ReadByte(Fifo, &PDU->FunctionCode);
     for (U8 i = 0; i < PROTOCOL_PAYLOAD_SIZE; i++)
@@ -147,7 +221,16 @@ void Protocol_AssemblePDU(FifoType* Fifo, PDUType* PDU)
         Fifo_ReadByte(Fifo, &PDU->Data[i]);
     }
     Fifo_ReadByte(Fifo, &PDU->LRC);
-    Protocol.MessageReady = TRUE;
+}
+
+void Protocol_AssembleTxPDU(PDUType* PDU, const U8 FunctionCode, const U8* Data)
+{
+    PDU->FunctionCode = FunctionCode;
+    for (U8 i = 0; i < PROTOCOL_PAYLOAD_SIZE; i++)
+    {
+        PDU->Data[i] = Data[i];
+    }
+    PDU->LRC = LRC_Calc((U8*)PDU, PROTOCOL_FUNC_CODE_SIZE + PROTOCOL_PAYLOAD_SIZE);
 }
 
 void Protocol_SendACK(void)
