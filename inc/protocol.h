@@ -8,7 +8,6 @@
 #ifndef _PROTOCOL_H_
 #define _PROTOCOL_H_
 
-
 //==================================================================================================
 // Include directives
 //==================================================================================================
@@ -54,11 +53,6 @@ typedef enum
 } ProtocolStateEnum;
 
 //==================================================================================================
-// External variable declarations
-//==================================================================================================
-
-
-//==================================================================================================
 // Function prototypes
 //==================================================================================================
 void Protocol_Init(void);
@@ -71,7 +65,5 @@ void Protocol_MessageRxEvent(void);
 void Protocol_MessageTxEvent(void);
 void Protocol_RxMessageHandledEvent(void);
 void Protocol_TxMessageHandledEvent(void);
-void Protocol_SendACK(void);
-void Protocol_SendNACK(void);
 
 #endif // _PROTOCOL_H_
