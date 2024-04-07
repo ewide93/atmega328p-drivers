@@ -57,11 +57,7 @@ typedef enum
 //==================================================================================================
 void Protocol_Init(void);
 void Protocol_Run(void);
-PDUType* Protocol_GetRxPDUPtr(void);
-PDUType* Protocol_GetTxPDUPtr(void);
-void Protocol_AssembleRxPDU(FifoType* Fifo, PDUType* PDU);
-void Protocol_AssembleTxPDU(PDUType* PDU, const U8 FunctionCode, const U8* Data);
-void Protocol_MessageRxEvent(void);
+void Protocol_MessageRxEvent(FifoType* Fifo);
 void Protocol_MessageTxEvent(void);
 void Protocol_RxMessageHandledEvent(void);
 void Protocol_TxMessageHandledEvent(void);

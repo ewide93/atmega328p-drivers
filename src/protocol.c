@@ -13,10 +13,6 @@
 #include "digital.h"
 
 //==================================================================================================
-// Local preprocessor definitions
-//==================================================================================================
-
-//==================================================================================================
 // Local function prototypes
 //==================================================================================================
 static U8 Protocol_CalcLRC(const PDUType* PDU);
@@ -24,6 +20,8 @@ static void Protocol_AssembleAckPDU(void);
 static void Protocol_AssembleNackPDU(void);
 static void Protocol_HandleMessage(void);
 static void Protocol_SendResponse(const PDUType* PDU);
+static void Protocol_AssembleRxPDU(FifoType* Fifo, PDUType* PDU);
+static void Protocol_AssembleTxPDU(PDUType* PDU, const U8 FunctionCode, const U8* Data);
 
 //==================================================================================================
 // Structures & enumerations.
@@ -175,7 +173,7 @@ void Protocol_Run(void)
         {
             if (Protocol.RxMessageReady)
             {
-                /* Calculate & compare LRC checksums. */
+                // Calculate & compare LRC checksums.
                 if ( !(Protocol.RxPDU.LRC == Protocol_CalcLRC(&Protocol.RxPDU)) )
                 {
                     Protocol_AssembleNackPDU();
@@ -211,28 +209,6 @@ void Protocol_Run(void)
 }
 
 /*
- *  @brief Getter for internal message reception PDU structure.
- *  @param
- *  @returns
- *      Pointer to message reception PDU structure.
- */
-PDUType* Protocol_GetRxPDUPtr(void)
-{
-    return &Protocol.RxPDU;
-}
-
-/*
- *  @brief Getter for internal message transmission PDU structure.
- *  @param
- *  @returns
- *      Pointer to message transmission PDU structure.
- */
-PDUType* Protocol_GetTxPDUPtr(void)
-{
-    return &Protocol.TxPDU;
-}
-
-/*
  *  @brief Event signalling a message has been transmitted.
  *  @note Called from UART interrupt context.
  *  @param
@@ -242,17 +218,18 @@ void Protocol_MessageTxEvent(void)
 {
     FSM_SetState(&Protocol.State, PROTOCOL_STATE_IDLE);
     UART_TxDisable();
-    UART_RxEnable();
 }
 
 /*
  *  @brief Event signalling a message is ready to be handled.
  *  @note Called from UART interrupt context.
- *  @param
+ *  @param Fifo
+ *      Pointer to buffer storing data recieved over UART.
  *  @returns
  */
-void Protocol_MessageRxEvent(void)
+void Protocol_MessageRxEvent(FifoType* Fifo)
 {
+    Protocol_AssembleRxPDU(Fifo, &Protocol.RxPDU);
     FSM_SetState(&Protocol.State, PROTOCOL_STATE_RX);
     Protocol.RxMessageReady = TRUE;
     UART_RxDisable();
@@ -279,6 +256,7 @@ void Protocol_RxMessageHandledEvent(void)
 void Protocol_TxMessageHandledEvent(void)
 {
     Protocol.TxMessageReady = FALSE;
+    UART_RxEnable();
 }
 
 /*
