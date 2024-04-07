@@ -2,34 +2,23 @@
 //
 // File: isr.h
 //
-// Purpose:
+// Purpose: Interrupt Service Routine header.
 //
 //==================================================================================================
 #ifndef _ISR_H_
 #define _ISR_H_
-
 
 //==================================================================================================
 // Include directives.
 //==================================================================================================
 #include "types.h"
 #include "hw_cfg.h"
-#include "timer.h"
 #include "register_macros.h"
 
-
 //==================================================================================================
-// Preprocessor definitions.
+// Structures & enumerations.
 //==================================================================================================
-#define TIM_INT_OVF   (0x00U)
-#define TIM_INT_COMPA (0x01U)
-#define TIM_INT_COMPB (0x02U)
-#define TIM_INT_CAPT  (0x20U)
-
-//==================================================================================================
-// Definitions of enumerations and structures.
-//==================================================================================================
-typedef enum InterruptVector                /* Interrupt Vector */
+typedef enum    /* Interrupt Vector */
 {
     INTERRUPT_VECTOR_EXT_INT0,
     INTERRUPT_VECTOR_EXT_INT1,
@@ -58,13 +47,13 @@ typedef enum InterruptVector                /* Interrupt Vector */
     INTERRUPT_VECTOR_SPM_RDY,
 } InterruptVectorEnum;
 
-typedef enum ExtInt                         /* External Interrupt */
+typedef enum    /* External Interrupt */
 {
     EXT_INT_0,
     EXT_INT_1
 } ExtIntEnum;
 
-typedef enum ExtIntSense                      /* External Interrupt Sense Control */
+typedef enum    /* External Interrupt Sense Control */
 {
     EXT_INT_SC_LOW,
     EXT_INT_SC_ANY,
@@ -72,116 +61,63 @@ typedef enum ExtIntSense                      /* External Interrupt Sense Contro
     EXT_INT_SC_RISING,
 } ExtIntSenseEnum;
 
+
+
 //==================================================================================================
 // Function prototypes.
 //==================================================================================================
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_GlobalInterruptEnable
-// Brief    : Enable interrupts globally.
-//--------------------------------------------------------------------------------------------------
-void ISR_GlobalInterruptEnable(void);
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_GlobalInterruptDisable
-// Brief    : Disable interrupts globally.
-//--------------------------------------------------------------------------------------------------
-void ISR_GlobalInterruptDisable(void);
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_ExternalInterruptInit
-// Brief    : Initialize an external interrupt.
-//--------------------------------------------------------------------------------------------------
+/*
+ *  @brief Initialize an external interrupt with a specified edge sensitivity.
+ *  @param Interrupt
+ *      External interrupt to configure.
+ *  @param SenseControl
+ *      Edge sensitivity of the interrupt.
+ *  @returns
+ */
 void ISR_ExternalInterruptInit(ExtIntEnum Interrupt, ExtIntSenseEnum SenseControl);
 
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_ExternalInterruptEnable
-// Brief    : Enable a specific external interrupt.
-//--------------------------------------------------------------------------------------------------
+/*
+ *  @brief Enable a specific external interrupt.
+ *  @param
+ *  @returns
+ */
 void ISR_ExternalInterruptEnable(ExtIntEnum Interrupt);
 
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_ExternalInterruptDisable
-// Brief    : Disable a specific external interrupt.
-//--------------------------------------------------------------------------------------------------
+/*
+ *  @brief Disable a specific external interrupt.
+ *  @param
+ *  @returns
+ */
 void ISR_ExternalInterruptDisable(ExtIntEnum Interrupt);
 
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_AddInterruptHandler
-// Brief    : Make specified function the interrupt handler of the given interrupt.
-//--------------------------------------------------------------------------------------------------
+/*
+ *  @brief Make specified function the interrupt handler of the given interrupt.
+ *  @param
+ *  @returns
+ */
 void ISR_AddInterruptHandler(VoidFunctionPtr Function, InterruptVectorEnum InterruptVector);
 
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_TimerInterruptEnable
-// Brief    : Enable the specified interrupt for the given timer.
-//--------------------------------------------------------------------------------------------------
-void ISR_TimerInterruptEnable(TimerType* TimerHandle, const uint8_t Interrupt);
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_TimerInterruptEnable
-// Brief    : Disable the specified interrupt for the given timer.
-//--------------------------------------------------------------------------------------------------
-void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt);
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_TimerInterruptToggle
-// Brief    : Toggle the specified interrupt for the given timer.
-//--------------------------------------------------------------------------------------------------
-void ISR_TimerInterruptToggle(TimerType* TimerHandle, const uint8_t Interrupt);
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_UART_RxInterruptEnable
-// Brief    : Enable Rx complete interrupt for UART peripheral.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_UART_RxInterruptEnable(void)
+//==================================================================================================
+// Inline function definitions.
+//==================================================================================================
+/*
+ *  @brief Enable interrupts globally.
+ *  @param
+ *  @returns
+ */
+static inline void ISR_GlobalInterruptEnable(void)
 {
-    UCSR0B |= (1 << RXCIE0);
+    asm("SEI");
 }
 
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_UART_RxInterruptDisable
-// Brief    : Disable Rx complete interrupt for UART peripheral.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_UART_RxInterruptDisable(void)
+/*
+ *  @brief Disable interrupts globally.
+ *  @param
+ *  @returns
+ */
+static inline void ISR_GlobalInterruptDisable(void)
 {
-    UCSR0B &= ~(1 << RXCIE0);
-}
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_UART_TxInterruptEnable
-// Brief    : Enable Tx complete interrupt for UART peripheral.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_UART_TxInterruptEnable(void)
-{
-    UCSR0B |= (1 << TXCIE0);
-}
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_UART_TxInterruptDisable
-// Brief    : Disable Tx complete interrupt for UART peripheral.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_UART_TxInterruptDisable(void)
-{
-    UCSR0B &= ~(1 << TXCIE0);
-}
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_UART_DataRegEmptyInterruptEnable
-// Brief    : Enable data register empty interrupt for UART peripheral.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_UART_DataRegEmptyInterruptEnable(void)
-{
-    UCSR0B |= (1 << UDRIE0);
-}
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_UART_DataRegEmptyInterruptDisable
-// Brief    : Disable data register empty interrupt for UART peripheral.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_UART_DataRegEmptyInterruptDisable(void)
-{
-    UCSR0B &= ~(1 << UDRIE0);
+    asm("CLI");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -202,21 +138,4 @@ static inline void ISR_SPI_InterruptDisable(void)
     ClearBit(SPCR, SPIE);
 }
 
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_ADC_InterruptEnable
-// Brief    : Enable ADC conversion complete interrupt.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_ADC_InterruptEnable(void)
-{
-    SetBit(ADCSRA, ADIE);
-}
-
-//--------------------------------------------------------------------------------------------------
-// Function : ISR_ADC_InterruptDisable
-// Brief    : Disable ADC conversion complete interrupt.
-//--------------------------------------------------------------------------------------------------
-static inline void ISR_ADC_InterruptDisable(void)
-{
-    ClearBit(ADCSRA, ADIE);
-}
 #endif // _ISR_H_

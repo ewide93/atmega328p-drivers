@@ -7,13 +7,11 @@
 //
 //==================================================================================================
 
-
 //==================================================================================================
 // Include directives.
 //==================================================================================================
 #include "isr.h"
 #include <avr/interrupt.h>
-
 
 //==================================================================================================
 // Local preprocessor macros.
@@ -64,29 +62,16 @@ static VoidFunctionPtr InterruptHandlers[INTERRUPT_VECTOR_TABLE_LENGTH] =
 
 
 //==================================================================================================
-// Static function definitions.
+// Local function definitions.
 //==================================================================================================
 static void ISR_NullHandler(void)
 {
     return;
 }
 
-
 //==================================================================================================
-// Function definitions.
+// External function definitions.
 //==================================================================================================
-void ISR_GlobalInterruptEnable(void)
-{
-    asm("SEI");
-}
-
-
-void ISR_GlobalInterruptDisable(void)
-{
-    asm("CLI");
-}
-
-
 void ISR_ExternalInterruptEnable(ExtIntEnum Interrupt)
 {
     if      (Interrupt == EXT_INT_0) { EIMSK |= (1 << INT0); }
@@ -146,23 +131,6 @@ void ISR_ExternalInterruptInit(ExtIntEnum Interrupt, ExtIntSenseEnum SenseContro
 void ISR_AddInterruptHandler(VoidFunctionPtr Function, InterruptVectorEnum InterruptVector)
 {
     InterruptHandlers[InterruptVector] = Function;
-}
-
-
-void ISR_TimerInterruptEnable(TimerType* TimerHandle, const uint8_t Interrupt)
-{
-    *(TimerHandle->IntMaskReg) |= (1 << Interrupt);
-}
-
-
-void ISR_TimerInterruptDisable(TimerType* TimerHandle, const uint8_t Interrupt)
-{
-    *(TimerHandle->IntMaskReg) &= ~(1 << Interrupt);
-}
-
-void ISR_TimerInterruptToggle(TimerType* TimerHandle, const uint8_t Interrupt)
-{
-    *(TimerHandle->IntMaskReg) ^= (1 << Interrupt);
 }
 
 //==================================================================================================

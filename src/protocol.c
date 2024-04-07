@@ -49,6 +49,7 @@ static ProtocolHandlerType Protocol;
  *  @param PDU
  *      Pointer to PDU for which a LRC is to be calculated.
  *  @returns
+ *      LRC checksum.
  */
 static U8 Protocol_CalcLRC(const PDUType* PDU)
 {
@@ -57,7 +58,8 @@ static U8 Protocol_CalcLRC(const PDUType* PDU)
 
 /*
  *  @brief Assemble a generic acknowledge response.
- *  @param void
+ *  @param
+ *  @returns
  */
 static void Protocol_AssembleAckPDU(void)
 {

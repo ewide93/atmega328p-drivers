@@ -66,13 +66,44 @@ typedef enum
 //==================================================================================================
 // Inline function definitions
 //==================================================================================================
+/*
+ *  @brief Enable ADC peripheral.
+ *  @param
+ *  @returns
+ */
 static inline void ADC_Enable(void)
 {
     ADCSRA |= (1 << ADEN);
 }
+
+/*
+ *  @brief Disable ADC peripheral.
+ *  @param
+ *  @returns
+ */
 static inline void ADC_Disable(void)
 {
     ADCSRA &= ~(1 << ADEN);
+}
+
+/*
+ *  @brief Enable ADC conversion complete interrupt.
+ *  @param
+ *  @returns
+ */
+static inline void ADC_InterruptEnable(void)
+{
+    SetBit(ADCSRA, ADIE);
+}
+
+/*
+ *  @brief Disable ADC conversion complete interrupt.
+ *  @param
+ *  @returns
+ */
+static inline void ADC_InterruptDisable(void)
+{
+    ClearBit(ADCSRA, ADIE);
 }
 
 //==================================================================================================

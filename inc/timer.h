@@ -2,7 +2,7 @@
 //
 // File name: timer.h
 //
-// Purpose:
+// Purpose: Timer peripherals.
 //
 //==================================================================================================
 #ifndef _TIMER_H_
@@ -14,18 +14,19 @@
 //==================================================================================================
 #include "types.h"
 #include "hw_cfg.h"
+#include "isr.h"
 
 
 //==================================================================================================
 // Preprocessor definitions
 //==================================================================================================
-#define Timer0              ((Timer0Type*)Timer0Handle->Timer)    /* NOTE: May not be necessary... */
-#define Timer1              ((Timer1Type*)Timer1Handle->Timer)    /* NOTE: May not be necessary... */
-#define Timer2              ((Timer2Type*)Timer2Handle->Timer)    /* NOTE: May not be necessary... */
+// #define Timer0              ((Timer0Type*)Timer0Handle->Timer)    /* NOTE: May not be necessary... */
+// #define Timer1              ((Timer1Type*)Timer1Handle->Timer)    /* NOTE: May not be necessary... */
+// #define Timer2              ((Timer2Type*)Timer2Handle->Timer)    /* NOTE: May not be necessary... */
 
-#define TIMER0_ID           (0x00U)
-#define TIMER1_ID           (0x01U)
-#define TIMER2_ID           (0x02U)
+// #define TIMER0_ID           (0x00U)
+// #define TIMER1_ID           (0x01U)
+// #define TIMER2_ID           (0x02U)
 
                                            /* Timer 0 Clock Prescalers                             */
 #define TIMER0_PRESCALER_1      (0x01U)    /* Timer frequency: 16 MHz      -> Period time: 62.5 ns */
@@ -54,9 +55,24 @@
 
 
 //==================================================================================================
-// Structure definitions
+// Structures & enumerations
 //==================================================================================================
-typedef struct Timer0Type              /* Memory mapped I/O structure for Timer 0   */
+typedef enum
+{
+    TIMER0 = 0x00,
+    TIMER1 = 0x01,
+    TIMER2 = 0x02
+} TimerEnum;
+
+typedef enum
+{
+    TIM_INT_OVF = 0x00,
+    TIM_INT_COMPA = 0x01,
+    TIM_INT_COMPB = 0x02,
+    TIM_INT_CAPT  = 0x05
+} TimerInterruptEnum;
+
+typedef struct                         /* Memory mapped I/O structure for Timer 0   */
 {
     volatile uint8_t CtrlRegA;         /* TCCR0A – Timer/Counter Control Register A */
     volatile uint8_t CtrlRegB;         /* TCCR0B – Timer/Counter Control Register B */
@@ -65,7 +81,7 @@ typedef struct Timer0Type              /* Memory mapped I/O structure for Timer 
     volatile uint8_t OutCompRegB;      /* OCR0B  – Output Compare Register B        */
 } Timer0Type;
 
-typedef struct Timer0CfgType           /* Configuration structure for Timer 0       */
+typedef struct                         /* Configuration structure for Timer 0       */
 {
     uint8_t Prescaler;                 /* TIMER0_PRESCALER_x                        */
     uint8_t WaveGenMode;               /* TIMER0_WGM_x                              */
@@ -75,7 +91,7 @@ typedef struct Timer0CfgType           /* Configuration structure for Timer 0   
     uint8_t OutCompValB;
 } Timer0CfgType;
 
-typedef struct Timer1Type              /* Memory mapped I/O structure for Timer 1    */
+typedef struct                        /* Memory mapped I/O structure for Timer 1    */
 {
     volatile uint8_t CtrlRegA;         /* TCCR1A – Timer/Counter1 Control Register A */
     volatile uint8_t CtrlRegB;         /* TCCR1B – Timer/Counter1 Control Register B */
@@ -87,12 +103,12 @@ typedef struct Timer1Type              /* Memory mapped I/O structure for Timer 
     volatile uint16_t OutCompRegB;     /* OCR1B  – Output Compare Register 1 B       */
 } Timer1Type;
 
-typedef struct Timer1CfgType
+typedef struct
 {
     uint8_t Placeholder;
 } Timer1CfgType;
 
-typedef struct Timer2Type               /* Memory mapped I/O structure for Timer 2   */
+typedef struct                         /* Memory mapped I/O structure for Timer 2   */
 {
     volatile uint8_t CtrlRegA;          /* TCCR2A – Timer/Counter Control Register A */
     volatile uint8_t CtrlRegB;          /* TCCR2B – Timer/Counter Control Register B */
@@ -103,12 +119,12 @@ typedef struct Timer2Type               /* Memory mapped I/O structure for Timer
     volatile uint8_t AsyncStatusReg;    /* ASSR   – Asynchronous Status Register     */
 } Timer2Type;
 
-typedef struct Timer2CfgType
+typedef struct
 {
     uint8_t Placeholder;
 } Timer2CfgType;
 
-typedef struct TimerType                /* Generic timer structure                   */
+typedef struct                          /* Generic timer structure                   */
 {
     void* const Timer;                  /* Pointer to timer MMIO structure           */
     volatile uint8_t* IntMaskReg;       /* Interrupt mask register                   */
@@ -122,11 +138,12 @@ extern TimerType* Timer0Handle;
 extern TimerType* Timer1Handle;
 extern TimerType* Timer2Handle;
 
-
 //==================================================================================================
 // Function prototypes
 //==================================================================================================
 void Timer_Init(void* TimerHandle, void* TimerCfg, const uint8_t TimerID);
-
+void Timer0_Init(const Timer0CfgType* Cfg);
+void Timer_InterruptEnable(const TimerEnum Timer, const TimerInterruptEnum Interrupt);
+void Timer_InterruptDisable(const TimerEnum Timer, const TimerInterruptEnum Interrupt);
 
 #endif // _TIMER_H_
