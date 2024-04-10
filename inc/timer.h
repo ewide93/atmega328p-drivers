@@ -20,14 +20,6 @@
 //==================================================================================================
 // Preprocessor definitions
 //==================================================================================================
-// #define Timer0              ((Timer0Type*)Timer0Handle->Timer)    /* NOTE: May not be necessary... */
-// #define Timer1              ((Timer1Type*)Timer1Handle->Timer)    /* NOTE: May not be necessary... */
-// #define Timer2              ((Timer2Type*)Timer2Handle->Timer)    /* NOTE: May not be necessary... */
-
-// #define TIMER0_ID           (0x00U)
-// #define TIMER1_ID           (0x01U)
-// #define TIMER2_ID           (0x02U)
-
                                            /* Timer 0 Clock Prescalers                             */
 #define TIMER0_PRESCALER_1      (0x01U)    /* Timer frequency: 16 MHz      -> Period time: 62.5 ns */
 #define TIMER0_PRESCALER_8      (0x02U)    /* Timer frequency: 2 MHz       -> Period time: 0.5 us  */
@@ -53,7 +45,12 @@
 #define TIMER0_COMB_CLEAR       (0x02U)    /* Clear  OC0B (Pin 5) on compare match                 */
 #define TIMER0_COMB_SET         (0x03U)    /* Set OC0B (Pin 5) on compare match                    */
 
-
+#define TIMER0_DEFAULT_CFG (&(Timer0CfgType){   .OutCompValA = 250, \
+                                                .OutCompValB = 250, \
+                                                .Prescaler = TIMER0_PRESCALER_64, \
+                                                .OutModeA = TIMER0_COMA_NONE, \
+                                                .OutModeB = TIMER0_COMB_NONE, \
+                                                .WaveGenMode = TIMER0_WGM_CTC })
 //==================================================================================================
 // Structures & enumerations
 //==================================================================================================

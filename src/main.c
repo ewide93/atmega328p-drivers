@@ -42,7 +42,7 @@ int main(void)
 
     while (TRUE)
     {
-
+        Protocol_Run();
     }
     return 0;
 }
@@ -53,7 +53,7 @@ int main(void)
 //==================================================================================================
 static void Timer0_CompareAHandler(void)
 {
-    Protocol_Run();
+    // Protocol_Run();
 }
 
 static inline void Setup(void)
@@ -62,16 +62,7 @@ static inline void Setup(void)
     Digital_PinInit(5, IO_MODE_OUTPUT);
     Digital_PinInit(6, IO_MODE_OUTPUT);
 
-    Timer0CfgType Timer0Cfg =
-    {
-        .OutCompValA = 250,
-        .OutCompValB = 250,
-        .Prescaler = TIMER0_PRESCALER_64,
-        .OutModeA = TIMER0_COMA_NONE,
-        .OutModeB = TIMER0_COMB_NONE,
-        .WaveGenMode = TIMER0_WGM_CTC
-    };
-    Timer0_Init(&Timer0Cfg);
+    Timer0_Init(TIMER0_DEFAULT_CFG);
     Timer_InterruptEnable(TIMER0, TIM_INT_COMPA);
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
 
