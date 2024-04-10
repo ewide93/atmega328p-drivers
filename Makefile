@@ -78,6 +78,16 @@ LDFLAGS += -Wl,--gc-sections
 OPT := -O2
 
 #================================================================================
+# Unit test toolchain configuration.
+#================================================================================
+UNITY_SRC_DIR := Unity/src
+UT_DIR := unittests
+UT_BUILD_DIR := $(UT_DIR)/build
+UT_CC := gcc
+UT_INC := -I$(UNITY_SRC_DIR) -I$(INC_DIR)
+TESTRUNNER := $(UT_BUILD_DIR)/testrunner.exe
+
+#================================================================================
 # Rule to invoke all rules necessary to produce the .hex-file.
 #================================================================================
 .PHONY: all
@@ -137,7 +147,16 @@ clean:
 #================================================================================
 .PHONY: lint
 lint:
-	@$(LINTER) $(LINTFLAGS) $(LINT_INC) $(LINT_SUPPRESS) .
+	@$(LINTER) $(LINTFLAGS) $(LINT_INC) $(LINT_SUPPRESS) $(SRC_DIR)
+
+#================================================================================
+# Rule to build & run unit tests.
+#================================================================================
+.PHONY: test
+test:
+	@$(UT_CC) $(UT_DIR)/test_lrc.c $(SRC_DIR)/lrc.c $(UNITY_SRC_DIR)/unity.c $(UT_INC) -o $(TESTRUNNER)
+	@$(TESTRUNNER)
+	@rm -rf $(UT_BUILD_DIR)/*.exe
 
 #================================================================================
 # Include the dependencies.
