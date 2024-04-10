@@ -80,12 +80,8 @@ OPT := -O2
 #================================================================================
 # Unit test toolchain configuration.
 #================================================================================
-UNITY_SRC_DIR := Unity/src
 UT_DIR := unittests
-UT_BUILD_DIR := $(UT_DIR)/build
-UT_CC := gcc
-UT_INC := -I$(UNITY_SRC_DIR) -I$(INC_DIR)
-TESTRUNNER := $(UT_BUILD_DIR)/testrunner.exe
+TEST_MAKEFILES := $(wildcard $(UT_DIR)/*.mk)
 
 #================================================================================
 # Rule to invoke all rules necessary to produce the .hex-file.
@@ -154,9 +150,8 @@ lint:
 #================================================================================
 .PHONY: test
 test:
-	@$(UT_CC) $(UT_DIR)/test_lrc.c $(SRC_DIR)/lrc.c $(UNITY_SRC_DIR)/unity.c $(UT_INC) -o $(TESTRUNNER)
-	@$(TESTRUNNER)
-	@rm -rf $(UT_BUILD_DIR)/*.exe
+	@$(MAKE) --makefile=$(UT_DIR)/test_lrc.mk
+	@$(MAKE) --makefile=$(UT_DIR)/test_fifo.mk
 
 #================================================================================
 # Include the dependencies.
