@@ -80,8 +80,8 @@ OPT := -O2
 #================================================================================
 # Unit test toolchain configuration.
 #================================================================================
-UT_DIR := unittests
-TEST_MAKEFILES := $(wildcard $(UT_DIR)/*.mk)
+UNIT_TEST_DIR := unittests
+UNIT_TEST_MAKEFILE := $(UNIT_TEST_DIR)/UnitTest.mk
 
 #================================================================================
 # Rule to invoke all rules necessary to produce the .hex-file.
@@ -150,8 +150,7 @@ lint:
 #================================================================================
 .PHONY: test
 test:
-	@$(MAKE) --makefile=$(UT_DIR)/test_lrc.mk
-	@$(MAKE) --makefile=$(UT_DIR)/test_fifo.mk
+	@$(MAKE) --makefile=$(UNIT_TEST_MAKEFILE) --silent
 
 #================================================================================
 # Include the dependencies.
