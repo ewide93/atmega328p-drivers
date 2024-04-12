@@ -23,13 +23,19 @@ UNIT_TEST_INC := -I$(UNITY_INC) -I$(INC_DIR)
 UNIT_TEST_TARGETS := $(patsubst $(UNIT_TEST_DIR)/%.c,$(UNIT_TEST_BUILD_DIR)/%.exe,$(wildcard $(UNIT_TEST_DIR)/*.c))
 
 #================================================================================
-# Rule used for running unit tests, followed by cleaning up bulld artifacts.
+# Rule used for running unit tests.
+#    Accumulate test results from stdout & stderr into test_result.txt,
+#    present the results by running the test_result_parser.py script.
+#    Perform post-test cleanup.
 #================================================================================
 .PHONY: run_tests
 run_tests: build_tests
 	@echo "Running unit tests..."
-	@$(UNIT_TEST_TARGETS)
+	@$(UNIT_TEST_BUILD_DIR)/test_lrc.exe >> test_results.txt 2>&1 || true
+	@$(UNIT_TEST_BUILD_DIR)/test_fifo.exe >> test_results.txt 2>&1 || true
+	@python scripts/test_result_parser.py test_results.txt
 	@rm -rf $(UNIT_TEST_BUILD_DIR)/*.exe
+	@rm test_results.txt
 
 #================================================================================
 # Rule to build all defined targets.
