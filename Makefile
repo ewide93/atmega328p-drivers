@@ -1,10 +1,4 @@
 #================================================================================
-# Shell configurations.
-#================================================================================
-SHELL := bash
-.SHELLFLAGS := -eu -o pipefail -c
-
-#================================================================================
 # Make configurations.
 #================================================================================
 MAKEFLAGS += --no-builtin-rules
@@ -50,9 +44,10 @@ F_CPU := 16000000UL
 # Linter options.
 LINTER := cppcheck
 LINTER_CACHE_DIR = build/cppcheck_cache
-LINTFLAGS = --enable=all --quiet --std=c99
-LINTFLAGS += --platform=avr8 --cppcheck-build-dir=$(LINTER_CACHE_DIR)
-LINT_INC = -I$(INC_DIR)
+LINT_AVR_CFG := "C:/Program Files/Cppcheck/platforms/avr8.xml"
+LINTFLAGS := --enable=all --quiet --std=c99
+LINTFLAGS += --platform=$(LINT_AVR_CFG) --cppcheck-build-dir=$(LINTER_CACHE_DIR)
+LINT_INC = -I $(INC_DIR)
 LINT_SUPPRESS = --suppress=missingIncludeSystem --suppress=unusedFunction
 
 # Compilation options.

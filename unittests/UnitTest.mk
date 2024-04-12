@@ -21,6 +21,7 @@ UNIT_TEST_BUILD_DIR := $(UNIT_TEST_DIR)/build
 UNIT_TEST_CC := gcc
 UNIT_TEST_INC := -I$(UNITY_INC) -I$(INC_DIR)
 UNIT_TEST_TARGETS := $(patsubst $(UNIT_TEST_DIR)/%.c,$(UNIT_TEST_BUILD_DIR)/%.exe,$(wildcard $(UNIT_TEST_DIR)/*.c))
+TESTRUNNER_ARGS := >> test_results.txt 2>&1 || true
 
 #================================================================================
 # Rule used for running unit tests.
@@ -31,8 +32,9 @@ UNIT_TEST_TARGETS := $(patsubst $(UNIT_TEST_DIR)/%.c,$(UNIT_TEST_BUILD_DIR)/%.ex
 .PHONY: run_tests
 run_tests: build_tests
 	@echo "Running unit tests..."
-	@$(UNIT_TEST_BUILD_DIR)/test_lrc.exe >> test_results.txt 2>&1 || true
-	@$(UNIT_TEST_BUILD_DIR)/test_fifo.exe >> test_results.txt 2>&1 || true
+	@$(UNIT_TEST_BUILD_DIR)/test_lrc.exe $(TESTRUNNER_ARGS)
+	@$(UNIT_TEST_BUILD_DIR)/test_fifo.exe $(TESTRUNNER_ARGS)
+	@$(UNIT_TEST_BUILD_DIR)/test_fsm.exe $(TESTRUNNER_ARGS)
 	@python scripts/test_result_parser.py test_results.txt
 	@rm -rf $(UNIT_TEST_BUILD_DIR)/*.exe
 	@rm test_results.txt
@@ -54,4 +56,10 @@ $(UNIT_TEST_BUILD_DIR)/test_lrc.exe: $(UNIT_TEST_DIR)/test_lrc.c $(SRC_DIR)/lrc.
 # Rule to build testrunner for test_fifo.
 #================================================================================
 $(UNIT_TEST_BUILD_DIR)/test_fifo.exe: $(UNIT_TEST_DIR)/test_fifo.c $(SRC_DIR)/fifo.c $(UNITY_SRC)
+	@$(UNIT_TEST_CC) $(UNIT_TEST_INC) $^ -o $@
+
+#================================================================================
+# Rule to build testrunner for test_fsm.
+#================================================================================
+$(UNIT_TEST_BUILD_DIR)/test_fsm.exe: $(UNIT_TEST_DIR)/test_fsm.c $(SRC_DIR)/fsm.c $(UNITY_SRC)
 	@$(UNIT_TEST_CC) $(UNIT_TEST_INC) $^ -o $@
