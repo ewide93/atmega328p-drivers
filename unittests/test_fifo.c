@@ -1,7 +1,6 @@
 #include "unity.h"
 #include "fifo.h"
 #include "types.h"
-#include <stdio.h>
 
 FifoType TestFifo;
 U8 TestArray[8];
@@ -22,7 +21,7 @@ void setUp(void)
 
 void tearDown(void)
 {
-    TestArrayClear();
+    Fifo_Clear(&TestFifo);
 }
 
 void test_AddTwoItemsAssertCorrectNofItems(void)
@@ -49,6 +48,7 @@ void test_AddTwoItemsAssertDataValid(void)
 void test_OverrunProtection(void)
 {
     U8 ResultArray[8] = { 0 };
+
     while(!Fifo_Full(&TestFifo))
     {
         Fifo_WriteByte(&TestFifo, 50);
@@ -59,7 +59,7 @@ void test_OverrunProtection(void)
     TEST_ASSERT_EQUAL(8, Fifo_GetNofItems(&TestFifo));
 
     U8 i = 0;
-    while(Fifo_GetNofItems(&TestFifo) > 0)
+    while(!Fifo_Empty(&TestFifo))
     {
         Fifo_ReadByte(&TestFifo, &ResultArray[i]);
         i++;
@@ -67,9 +67,61 @@ void test_OverrunProtection(void)
 
     for (U8 j = 0; j < 8; j++)
     {
-        printf("Data: %u\n", ResultArray[j]);
         TEST_ASSERT_EQUAL(50, ResultArray[j]);
     }
+}
+
+void test_ClearFifo(void)
+{
+    while (!Fifo_Full(&TestFifo))
+    {
+        Fifo_WriteByte(&TestFifo, 0xAA);
+    }
+    Fifo_Clear(&TestFifo);
+
+    TEST_ASSERT_EQUAL(TRUE, Fifo_Empty(&TestFifo));
+    TEST_ASSERT_EQUAL(8, Fifo_GetNofAvailable(&TestFifo));
+    for (U8 i = 0; i < 8; i++)
+    {
+        TEST_ASSERT_EQUAL(0, TestArray[i]);
+    }
+
+}
+
+void test_WrapAround(void)
+{
+    U8 Dummy = 0;
+    U8 Results[8] = { 0 };
+    U8 Expected[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xEE, 0xEE, 0xEE, 0xEE };
+
+    while (!Fifo_Full(&TestFifo))
+    {
+        Fifo_WriteByte(&TestFifo, 0xFF);
+    }
+
+    TEST_ASSERT_EQUAL(8, Fifo_GetNofItems(&TestFifo));
+
+    for (U8 i = 0; i < 4; i++)
+    {
+        Fifo_ReadByte(&TestFifo, &Dummy);
+    }
+
+    TEST_ASSERT_EQUAL(4, Fifo_GetNofItems(&TestFifo));
+    TEST_ASSERT_EQUAL(4, Fifo_GetNofAvailable(&TestFifo));
+
+    for (U8 i = 0; i < 4; i++)
+    {
+        Fifo_WriteByte(&TestFifo, 0xEE);
+    }
+
+    U8 j = 0;
+    while (!Fifo_Empty(&TestFifo))
+    {
+        Fifo_ReadByte(&TestFifo, &Results[j]);
+        j++;
+    }
+
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(Expected, Results, 8);
 }
 
 int main(void)
@@ -79,6 +131,8 @@ int main(void)
     RUN_TEST(test_AddTwoItemsAssertCorrectNofItems);
     RUN_TEST(test_AddTwoItemsAssertDataValid);
     RUN_TEST(test_OverrunProtection);
+    RUN_TEST(test_ClearFifo);
+    RUN_TEST(test_WrapAround);
 
     return UNITY_END();
 }
