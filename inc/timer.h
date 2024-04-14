@@ -45,12 +45,16 @@
 #define TIMER0_COMB_CLEAR       (0x02U)    /* Clear  OC0B (Pin 5) on compare match                 */
 #define TIMER0_COMB_SET         (0x03U)    /* Set OC0B (Pin 5) on compare match                    */
 
-#define TIMER0_DEFAULT_CFG (&(Timer0CfgType){   .OutCompValA = 250, \
-                                                .OutCompValB = 250, \
-                                                .Prescaler = TIMER0_PRESCALER_64, \
-                                                .OutModeA = TIMER0_COMA_NONE, \
-                                                .OutModeB = TIMER0_COMB_NONE, \
-                                                .WaveGenMode = TIMER0_WGM_CTC })
+#define TIMER0_DEFAULT_CFG ( &(Timer0CfgType) \
+    { \
+        .OutCompValA = 250, \
+        .OutCompValB = 250, \
+        .Prescaler = TIMER0_PRESCALER_64, \
+        .OutModeA = TIMER0_COMA_NONE, \
+        .OutModeB = TIMER0_COMB_NONE, \
+        .WaveGenMode = TIMER0_WGM_CTC \
+    } )
+
 //==================================================================================================
 // Structures & enumerations
 //==================================================================================================

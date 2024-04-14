@@ -136,14 +136,14 @@ class ProtocolHandler:
 
 
 def main() -> None:
-    uart_cfg = UARTConfig("COM3", 19200, 8, "N", 1, 0.3)
+    uart_cfg = UARTConfig("COM3", 57600, 8, "N", 1, 0.3)
     uart = ProtocolHandler(uart_cfg)
     uart.connect()
     for _ in range(10):
         uart.send(FunctionCode.TEST, [0x04], trace=True)
-        time.sleep(0.1)
+        time.sleep(0.01)
         uart.send(FunctionCode.TEST, [0x05], trace=True)
-        time.sleep(0.1)
+        time.sleep(0.01)
     uart.disconnect()
 
 

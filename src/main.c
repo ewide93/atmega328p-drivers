@@ -60,7 +60,6 @@ static inline void Setup(void)
 {
     Digital_PinInit(4, IO_MODE_OUTPUT);
     Digital_PinInit(5, IO_MODE_OUTPUT);
-    Digital_PinInit(6, IO_MODE_OUTPUT);
 
     Timer0_Init(TIMER0_DEFAULT_CFG);
     Timer_InterruptEnable(TIMER0, TIM_INT_COMPA);
@@ -71,7 +70,7 @@ static inline void Setup(void)
     // ADC_ConfigureAutoSampling(ADC_CHANNEL_3);
     // ADC_InterruptEnable();
 
-    UART_Init(UART_DATA_BITS_8, UART_PARITY_NONE, UART_STOP_BITS_1, UART_BAUD_RATE_19200);
+    UART_Init(UART_DATA_BITS_8, UART_PARITY_NONE, UART_STOP_BITS_1, UART_BAUD_RATE_57600);
     UART_TxInterruptEnable();
     UART_RxInterruptEnable();
     Protocol_Init();

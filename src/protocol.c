@@ -231,10 +231,10 @@ void Protocol_MessageTxEvent(void)
  */
 void Protocol_MessageRxEvent(FifoType* Fifo)
 {
-    Protocol_AssembleRxPDU(Fifo, &Protocol.RxPDU);
-    FSM_SetState(&Protocol.State, PROTOCOL_STATE_RX);
-    Protocol.RxMessageReady = TRUE;
     UART_RxDisable();
+    Protocol_AssembleRxPDU(Fifo, &Protocol.RxPDU);
+    Protocol.RxMessageReady = TRUE;
+    FSM_SetState(&Protocol.State, PROTOCOL_STATE_RX);
 }
 
 /*

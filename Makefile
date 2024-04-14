@@ -33,7 +33,7 @@ AVRDUDE := avrdude
 SIZE := avr-size
 
 # Flash programming options.
-PORT := COM6
+PORT := COM5
 PROGRAMMER := arduino
 BAUD_RATE := 115200
 
