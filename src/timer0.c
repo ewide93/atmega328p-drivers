@@ -6,7 +6,6 @@
 //
 //==================================================================================================
 
-
 //==================================================================================================
 // Include directives
 //==================================================================================================
@@ -15,13 +14,13 @@
 //==================================================================================================
 // Local preprocessor definitions
 //==================================================================================================
-#define OC0A_OUTPUT_ENABLE     (DDRD |= (1 << 6))
-#define OC0B_OUTPUT_ENABLE     (DDRD |= (1 << 5))
 
 //==================================================================================================
 // Local variables
 //==================================================================================================
-
+#define TIMER0_DDR          (DDRD)
+#define TIMER0_COMA_PIN     (6U)
+#define TIMER0_COMB_PIN     (5U)
 
 //==================================================================================================
 // Local function prototypes
@@ -97,10 +96,14 @@ static inline void Timer0_SetCompareValueB(const U8 CompareValue)
     OCR0B = CompareValue;
 }
 
-
 //==================================================================================================
 // External function definitions
 //==================================================================================================
+/*
+ *  @brief
+ *  @param
+ *  @returns
+ */
 void Timer0_Init(const Timer0CfgType* Cfg)
 {
     Timer0_SetPrescaler(Cfg->Prescaler);
@@ -109,8 +112,26 @@ void Timer0_Init(const Timer0CfgType* Cfg)
     Timer0_SetCompareMatchOutputModeB(Cfg->OutModeB);
     Timer0_SetCompareValueA(Cfg->OutCompValA);
     Timer0_SetCompareValueB(Cfg->OutCompValB);
-    if (Cfg->OutModeA > 0) OC0A_OUTPUT_ENABLE;
-    if (Cfg->OutModeB > 0) OC0B_OUTPUT_ENABLE;
+    if (Cfg->OutModeA > 0) Timer0_OutputAEnable();
+    if (Cfg->OutModeB > 0) Timer0_OutputBEnable();
 }
 
+/*
+ *  @brief
+ *  @param
+ *  @returns
+ */
+void Timer0_OutputAEnable(void)
+{
+    TIMER0_DDR |= (1 << TIMER0_COMA_PIN);
+}
 
+/*
+ *  @brief
+ *  @param
+ *  @returns
+ */
+void Timer0_OutputBEnable(void)
+{
+    TIMER0_DDR |= (1 << TIMER0_COMB_PIN);
+}

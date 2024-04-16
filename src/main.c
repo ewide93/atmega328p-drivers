@@ -7,7 +7,6 @@
 //
 //==================================================================================================
 
-
 //==================================================================================================
 // Include directives.
 //==================================================================================================
@@ -26,7 +25,7 @@
 //==================================================================================================
 static inline void Setup(void);
 static void Timer0_CompareAHandler(void);
-
+static void Timer1_CompareAHandler(void);
 
 //==================================================================================================
 // Variables
@@ -53,7 +52,22 @@ int main(void)
 //==================================================================================================
 static void Timer0_CompareAHandler(void)
 {
-    // Protocol_Run();
+    static volatile U8 Cnt = 0;
+    if (Cnt++ > 250)
+    {
+        Digital_TogglePin(5);
+        Cnt = 0;
+    }
+}
+
+static void Timer1_CompareAHandler(void)
+{
+    static volatile U8 Cnt = 0;
+    if (Cnt++ > 250)
+    {
+        Digital_TogglePin(4);
+        Cnt = 0;
+    }
 }
 
 static inline void Setup(void)
@@ -64,6 +78,10 @@ static inline void Setup(void)
     Timer0_Init(TIMER0_DEFAULT_CFG);
     Timer_InterruptEnable(TIMER0, TIM_INT_COMPA);
     ISR_AddInterruptHandler(Timer0_CompareAHandler, INTERRUPT_VECTOR_TIM0_COMPA);
+
+    Timer1_Init(TIMER1_DEFAULT_CFG);
+    Timer_InterruptEnable(TIMER1, TIM_INT_COMPA);
+    ISR_AddInterruptHandler(Timer1_CompareAHandler, INTERRUPT_VECTOR_TIM1_COMPA);
 
     // ADC_Init(ADC_REF_EXTERNAL, ADC_PRESCALER_128);
     // ADC_ConfigureAutoSampling(ADC_CHANNEL_0);
