@@ -10,7 +10,6 @@
 // Include directives
 //==================================================================================================
 #include "protocol.h"
-#include "digital.h"
 
 //==================================================================================================
 // Local function prototypes
@@ -22,6 +21,8 @@ static void Protocol_HandleMessage(void);
 static void Protocol_SendResponse(const PDUType* PDU);
 static void Protocol_AssembleRxPDU(FifoType* Fifo, PDUType* PDU);
 static void Protocol_AssembleTxPDU(PDUType* PDU, const U8 FunctionCode, const U8* Data);
+static inline void Protocol_MessageNotImplemented(void);
+static void Protocol_TestMessageHandler(void);
 
 //==================================================================================================
 // Structures & enumerations.
@@ -40,10 +41,288 @@ typedef struct
 // Local variables
 //==================================================================================================
 static ProtocolHandlerType Protocol;
+static const VoidFunctionPtr MessageHandlers[256] =
+{
+    Protocol_MessageNotImplemented,             /* Function code: 0x00 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x01 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x02 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x03 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x04 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x05 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x06 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x07 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x08 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x09 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x0A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x0B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x0C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x0D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x0E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x0F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x10 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x11 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x12 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x13 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x14 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x15 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x16 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x17 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x18 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x19 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x1A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x1B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x1C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x1D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x1E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x1F */
+    Protocol_TestMessageHandler,                /* Function code: 0x20 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x21 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x22 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x23 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x24 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x25 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x26 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x27 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x28 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x29 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x2A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x2B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x2C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x2D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x2E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x2F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x30 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x31 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x32 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x33 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x34 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x35 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x36 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x37 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x38 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x39 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x3A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x3B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x3C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x3D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x3E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x3F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x40 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x41 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x42 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x43 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x44 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x45 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x46 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x47 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x48 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x49 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x4A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x4B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x4C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x4D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x4E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x4F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x50 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x51 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x52 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x53 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x54 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x55 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x56 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x57 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x58 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x59 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x5A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x5B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x5C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x5D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x5E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x5F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x60 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x61 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x62 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x63 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x64 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x65 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x66 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x67 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x68 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x69 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x6A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x6B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x6C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x6D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x6E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x6F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x70 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x71 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x72 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x73 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x74 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x75 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x76 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x77 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x78 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x79 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x7A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x7B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x7C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x7D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x7E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x7F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x80 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x81 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x82 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x83 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x84 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x85 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x86 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x87 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x88 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x89 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x8A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x8B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x8C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x8D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x8E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x8F */
+    Protocol_MessageNotImplemented,             /* Function code: 0x90 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x91 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x92 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x93 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x94 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x95 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x96 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x97 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x98 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x99 */
+    Protocol_MessageNotImplemented,             /* Function code: 0x9A */
+    Protocol_MessageNotImplemented,             /* Function code: 0x9B */
+    Protocol_MessageNotImplemented,             /* Function code: 0x9C */
+    Protocol_MessageNotImplemented,             /* Function code: 0x9D */
+    Protocol_MessageNotImplemented,             /* Function code: 0x9E */
+    Protocol_MessageNotImplemented,             /* Function code: 0x9F */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA0 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA1 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA2 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA3 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA4 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA5 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA6 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA7 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA8 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xA9 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xAA */
+    Protocol_MessageNotImplemented,             /* Function code: 0xAB */
+    Protocol_MessageNotImplemented,             /* Function code: 0xAC */
+    Protocol_MessageNotImplemented,             /* Function code: 0xAD */
+    Protocol_MessageNotImplemented,             /* Function code: 0xAE */
+    Protocol_MessageNotImplemented,             /* Function code: 0xAF */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB0 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB1 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB2 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB3 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB4 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB5 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB6 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB7 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB8 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xB9 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xBA */
+    Protocol_MessageNotImplemented,             /* Function code: 0xBB */
+    Protocol_MessageNotImplemented,             /* Function code: 0xBC */
+    Protocol_MessageNotImplemented,             /* Function code: 0xBD */
+    Protocol_MessageNotImplemented,             /* Function code: 0xBE */
+    Protocol_MessageNotImplemented,             /* Function code: 0xBF */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC0 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC1 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC2 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC3 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC4 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC5 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC6 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC7 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC8 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xC9 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xCA */
+    Protocol_MessageNotImplemented,             /* Function code: 0xCB */
+    Protocol_MessageNotImplemented,             /* Function code: 0xCC */
+    Protocol_MessageNotImplemented,             /* Function code: 0xCD */
+    Protocol_MessageNotImplemented,             /* Function code: 0xCE */
+    Protocol_MessageNotImplemented,             /* Function code: 0xCF */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD0 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD1 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD2 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD3 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD4 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD5 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD6 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD7 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD8 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xD9 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xDA */
+    Protocol_MessageNotImplemented,             /* Function code: 0xDB */
+    Protocol_MessageNotImplemented,             /* Function code: 0xDC */
+    Protocol_MessageNotImplemented,             /* Function code: 0xDD */
+    Protocol_MessageNotImplemented,             /* Function code: 0xDE */
+    Protocol_MessageNotImplemented,             /* Function code: 0xDF */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE0 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE1 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE2 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE3 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE4 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE5 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE6 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE7 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE8 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xE9 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xEA */
+    Protocol_MessageNotImplemented,             /* Function code: 0xEB */
+    Protocol_MessageNotImplemented,             /* Function code: 0xEC */
+    Protocol_MessageNotImplemented,             /* Function code: 0xED */
+    Protocol_MessageNotImplemented,             /* Function code: 0xEE */
+    Protocol_MessageNotImplemented,             /* Function code: 0xEF */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF0 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF1 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF2 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF3 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF4 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF5 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF6 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF7 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF8 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xF9 */
+    Protocol_MessageNotImplemented,             /* Function code: 0xFA */
+    Protocol_MessageNotImplemented,             /* Function code: 0xFB */
+    Protocol_MessageNotImplemented,             /* Function code: 0xFC */
+    Protocol_MessageNotImplemented,             /* Function code: 0xFD */
+    Protocol_MessageNotImplemented,             /* Function code: 0xFE */
+    Protocol_MessageNotImplemented,             /* Function code: 0xFF */
+};
 
 //==================================================================================================
 // Local function definitions
 //==================================================================================================
+/*
+ *  @brief Function that assembles a non-acknowledge response to
+ *         indicate that this function code is not implemented.
+ *  @param
+ *  @returns
+ */
+static inline void Protocol_MessageNotImplemented(void)
+{
+    Protocol_AssembleNackPDU();
+}
+
+static void Protocol_TestMessageHandler(void)
+{
+    U8 Payload = Protocol.RxPDU.Data[0];
+    Digital_TogglePin(Payload);
+    Protocol_AssembleAckPDU();
+}
+
+
 /*
  *  @brief Convenience function to calculate LRC checksum for a PDU.
  *  @param PDU
@@ -85,22 +364,7 @@ static void Protocol_AssembleNackPDU(void)
  */
 static void Protocol_HandleMessage(void)
 {
-    /* TODO: Find more elegant solution to handle different messages. */
-    switch (Protocol.RxPDU.FunctionCode)
-    {
-        case FUNC_CODE_TEST:
-        {
-            U8 Payload = Protocol.RxPDU.Data[0];
-            Digital_TogglePin(Payload);
-            Protocol_AssembleAckPDU();
-            break;
-        }
-        default:
-        {
-            Protocol_AssembleNackPDU();
-            break;
-        }
-    }
+    MessageHandlers[Protocol.RxPDU.FunctionCode]();
 }
 
 /*

@@ -16,6 +16,7 @@
 #include "lrc.h"
 #include "uart.h"
 #include "fsm.h"
+#include "digital.h"
 
 //==================================================================================================
 // Preprocessor definitions
