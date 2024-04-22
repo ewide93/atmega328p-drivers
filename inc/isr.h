@@ -18,7 +18,10 @@
 //==================================================================================================
 // Structures & enumerations.
 //==================================================================================================
-typedef enum    /* Interrupt Vector */
+/**
+ * @brief Enumeration of entries in the interrupt vector table.
+*/
+typedef enum
 {
     INTERRUPT_VECTOR_EXT_INT0,
     INTERRUPT_VECTOR_EXT_INT1,

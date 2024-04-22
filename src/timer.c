@@ -26,7 +26,7 @@
 //==================================================================================================
 // External function definitions
 //==================================================================================================
-/*
+/**
  *  @brief Enable the specified interrupt for the given timer.
  *  @param Timer
  *      Timer peripheral instance.
@@ -45,7 +45,7 @@ void Timer_InterruptEnable(const TimerEnum Timer, const TimerInterruptEnum Inter
     }
 }
 
-/*
+/**
  *  @brief Disable the specified interrupt for the given timer.
  *  @param Timer
  *      Timer peripheral instance.

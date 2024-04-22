@@ -55,7 +55,7 @@ static inline void Timer1_SetCompareValueB(const U16 CompareValue);
 //==================================================================================================
 // Local function definitions
 //==================================================================================================
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -66,7 +66,7 @@ static inline void Timer1_SetPrescaler(const U8 Prescaler)
     TCCR1B |= ((Prescaler & TCCR1B_CS_MASK) << TCCR1B_CS_SHIFT);
 }
 
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -79,7 +79,7 @@ static inline void Timer1_SetWaveformGenerationMode(const U8 Mode)
     TCCR1B |= ((Mode & TCCR1B_WGM_MASK) << TCCR1B_WGM_SHIFT);
 }
 
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -90,7 +90,7 @@ static inline void Timer1_SetCompareMatchOutputModeA(const U8 Mode)
     TCCR1A |= ((Mode & TCCR1A_COMA_MASK) << TCCR1A_COMA_SHIFT);
 }
 
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -101,7 +101,7 @@ static inline void Timer1_SetCompareMatchOutputModeB(const U8 Mode)
     TCCR1A |= ((Mode & TCCR1A_COMB_MASK) << TCCR1A_COMB_SHIFT);
 }
 
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -111,7 +111,7 @@ static inline void Timer1_SetCompareValueA(const U16 CompareValue)
     OCR1A = CompareValue;
 }
 
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -125,7 +125,7 @@ static inline void Timer1_SetCompareValueB(const U16 CompareValue)
 //==================================================================================================
 // External function definitions
 //==================================================================================================
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -142,7 +142,7 @@ void Timer1_Init(const Timer1CfgType* Cfg)
     if (Cfg->OutModeB > 0) Timer1_OutputBEnable();
 }
 
-/*
+/**
  *  @brief
  *  @param
  *  @returns
@@ -152,7 +152,7 @@ void Timer1_OutputAEnable(void)
     TIMER1_DDR |= (1 << TIMER1_COMA_PIN);
 }
 
-/*
+/**
  *  @brief
  *  @param
  *  @returns
