@@ -15,6 +15,7 @@
 #include "hw_cfg.h"
 #include "digital.h"
 #include "register_macros.h"
+#include "fifo.h"
 
 //==================================================================================================
 // Preprocessor definitions
@@ -66,6 +67,9 @@ typedef enum
 // Function prototypes
 //==================================================================================================
 void SPI_MasterInit(const U8 Mode, const U8 DataOrder, const U8 Frequency);
+void SPI_WriteByteBlocking(const U8 Data);
+U8 SPI_ReadByteBlocking(void);
+U8 SPI_ExchangeByteBlocking(const U8 Data);
 // TODO: Implement SlaveInit function...
 // void SPI_SlaveInit(const U8 Mode, const U8 DataOrder);
 

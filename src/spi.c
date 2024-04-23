@@ -6,7 +6,6 @@
 //
 //==================================================================================================
 
-
 //==================================================================================================
 // Include directives
 //==================================================================================================
@@ -36,6 +35,10 @@
 #define SPSR_SPI2X_RIGHT_SHIFT  (2U)
 #define SPSR_SPI2X_CLEAR_MASK   (~(SPSR_SPI2X_MASK) >> SPSR_SPI2X_RIGHT_SHIFT)
 
+#define SPI_TX_BUFFER_LENGTH    (32U)
+#define SPI_RX_BUFFER_LENGTH    (32U)
+#define SPI_DUMMY_WRITE_VALUE   (0x00U)
+
 //==================================================================================================
 // Structures & enumerations
 //==================================================================================================
@@ -44,6 +47,10 @@
 // Local variables
 //==================================================================================================
 static BOOL SPI_Initialized = FALSE;
+static U8 TxBuffer[SPI_TX_BUFFER_LENGTH] = { 0 };
+static U8 RxBuffer[SPI_RX_BUFFER_LENGTH] = { 0 };
+static FifoType TxFifo;
+static FifoType RxFifo;
 
 //==================================================================================================
 // Local function prototypes
@@ -116,6 +123,11 @@ void SPI_MasterInit(const U8 Mode, const U8 DataOrder, const U8 Frequency)
 {
     if (!SPI_Initialized)
     {
+        /* Initialize private variables. */
+        Fifo_Init(&TxFifo, TxBuffer, SPI_TX_BUFFER_LENGTH);
+        Fifo_Init(&RxFifo, RxBuffer, SPI_RX_BUFFER_LENGTH);
+
+        /* Configure peripheral frequency, mode & data shifting order */
         SPI_SetDataOrder(DataOrder);
         SPI_SetFrequency(Frequency);
         SPI_SetMode(Mode);
@@ -126,7 +138,52 @@ void SPI_MasterInit(const U8 Mode, const U8 DataOrder, const U8 Frequency)
         /* Set MOSI, SCK & SS as outputs */
         SPI_DDR |= ((1 << SPI_MOSI_SHIFT) | (1 << SPI_SCK_SHIFT) | (1 << SPI_SS_SHIFT));
 
+        /* Enable peripheral. */
+        SPI_Enable();
+
         SPI_Initialized = TRUE;
     }
+}
+
+/**
+ *  @brief Write one byte of data, ignoring data shifted
+ *         back into SPI shift register.
+ *  @param Data
+ *      Data to be written.
+ *  @returns
+ */
+void SPI_WriteByteBlocking(const U8 Data)
+{
+    SPDR = Data;
+    while (!ReadBit(SPSR, SPIF)) { }
+    (void)SPDR;
+}
+
+/**
+ *  @brief Write one byte of dummy data in order to recieve a
+ *         byte into the SPI shift register.
+ *  @param
+ *  @returns
+ *      Recieved byte of data.
+ */
+U8 SPI_ReadByteBlocking(void)
+{
+    SPDR = SPI_DUMMY_WRITE_VALUE;
+    while (!ReadBit(SPSR, SPIF)) { }
+    return SPDR;
+}
+
+/**
+ *  @brief Write one byte, recieve on byte...
+ *  @param Data
+ *      Data to be written.
+ *  @returns
+ *      Recieved byte of data.
+ */
+U8 SPI_ExchangeByteBlocking(const U8 Data)
+{
+    SPDR = Data;
+    while (!ReadBit(SPSR, SPIF)) { }
+    return SPDR;
 }
 
